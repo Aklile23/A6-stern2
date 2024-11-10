@@ -79,13 +79,13 @@ const HomePage: React.FC = () => {
             Hover over a room to view a calendar and see available data by date. Click on a date to access detailed content, including images, videos, and point cloud data for that room.
           </p>
 
-          <Link to='/projectx' className='z-9999'>
+          {/* <Link to='/projectx' className='z-9999'>
             <button className="bg-primary text-white font-semibold ml-3 py-3 px-6 rounded-lg shadow-lg transition-transform duration-300 hover:scale-105 mb-6">
               Projects
             </button>
-          </Link>
+          </Link> */}
 
-          <div className="relative p-4 dark:bg-gray-700 rounded-lg shadow-lg max-w-7xl max-h-[80vh] mb-12">
+          <div className="relative p-4 dark:bg-gray-700 rounded-lg shadow-lg max-w-7xl max-h-[80vh] mb-12 mt-15">
             <img
               src="/Images/floorplan.jpg"
               alt="Floorplan"
@@ -98,7 +98,7 @@ const HomePage: React.FC = () => {
               onMouseEnter={(e) => handleRoomHover(e, 'room1')}
               onMouseLeave={handleRoomLeave}
               onClick={(e) => handleRoomClick(e, 'Room 1')}
-              className="absolute top-[15%] left-[6.5%] w-[25%] h-[20%] sm:w-[4%] sm:h-[8%] md:w-[3%] md:h-[6%] lg:w-[13%] lg:h-[30%] bg-red-500 bg-opacity-50 cursor-pointer rounded"
+              className="absolute top-[15%] left-[6.5%] w-[25%] h-[20%] sm:w-[4%] sm:h-[8%] md:w-[3%] md:h-[6%] lg:w-[13%] lg:h-[30%] bg-black bg-opacity-0 hover:bg-opacity-10 cursor-pointer rounded"
               title="Room 1"
             ></div>
 
@@ -106,7 +106,7 @@ const HomePage: React.FC = () => {
               onMouseEnter={(e) => handleRoomHover(e, 'room2')}
               onMouseLeave={handleRoomLeave}
               onClick={(e) => handleRoomClick(e, 'Room 2')}
-              className="absolute top-[15%] left-[20.5%] w-[5%] h-[10%] sm:w-[4%] sm:h-[8%] md:w-[3%] md:h-[6%] lg:w-[10%] lg:h-[30%] bg-blue-500 bg-opacity-50 cursor-pointer rounded"
+              className="absolute top-[15%] left-[20.5%] w-[5%] h-[10%] sm:w-[4%] sm:h-[8%] md:w-[3%] md:h-[6%] lg:w-[10%] lg:h-[30%] bg-black bg-opacity-0 hover:bg-opacity-10 cursor-pointer rounded"
               title="Room 2"
             ></div>
 
@@ -114,7 +114,7 @@ const HomePage: React.FC = () => {
               onMouseEnter={(e) => handleRoomHover(e, 'room3')}
               onMouseLeave={handleRoomLeave}
               onClick={(e) => handleRoomClick(e, 'Room 3')}
-              className="absolute top-[15%] left-[31%] w-[5%] h-[10%] sm:w-[4%] sm:h-[8%] md:w-[3%] md:h-[6%] lg:w-[10.5%] lg:h-[30%] bg-green-500 bg-opacity-50 cursor-pointer rounded"
+              className="absolute top-[15%] left-[31%] w-[5%] h-[10%] sm:w-[4%] sm:h-[8%] md:w-[3%] md:h-[6%] lg:w-[10.5%] lg:h-[30%] bg-black bg-opacity-0 hover:bg-opacity-10 cursor-pointer rounded"
               title="Room 3"
             ></div>
 
@@ -122,7 +122,7 @@ const HomePage: React.FC = () => {
               onMouseEnter={(e) => handleRoomHover(e, 'room4')}
               onMouseLeave={handleRoomLeave}
               onClick={(e) => handleRoomClick(e, 'Room 4')}
-              className="absolute top-[15%] left-[42.5%] w-[8%] h-[15%] sm:w-[6%] sm:h-[12%] md:w-[5%] md:h-[10%] lg:w-[9.5%] lg:h-[30%] bg-yellow-500 bg-opacity-50 cursor-pointer rounded"
+              className="absolute top-[15%] left-[42.5%] w-[8%] h-[15%] sm:w-[6%] sm:h-[12%] md:w-[5%] md:h-[10%] lg:w-[9.5%] lg:h-[30%] bg-black bg-opacity-0 hover:bg-opacity-10 cursor-pointer rounded"
               title="Room 4"
             ></div>
 
@@ -130,7 +130,7 @@ const HomePage: React.FC = () => {
               onMouseEnter={(e) => handleRoomHover(e, 'room5')}
               onMouseLeave={handleRoomLeave}
               onClick={(e) => handleRoomClick(e, 'Room 5')}
-              className="absolute top-[15%] left-[52.6%] w-[8%] h-[15%] sm:w-[6%] sm:h-[12%] md:w-[5%] md:h-[10%] lg:w-[9%] lg:h-[30%] bg-purple-500 bg-opacity-50 cursor-pointer rounded"
+              className="absolute top-[15%] left-[52.6%] w-[8%] h-[15%] sm:w-[6%] sm:h-[12%] md:w-[5%] md:h-[10%] lg:w-[9%] lg:h-[30%] bg-black bg-opacity-0 hover:bg-opacity-10  cursor-pointer rounded"
               title="Room 5"
             ></div>
 
@@ -138,7 +138,7 @@ const HomePage: React.FC = () => {
               onMouseEnter={(e) => handleRoomHover(e, 'room6')}
               onMouseLeave={handleRoomLeave}
               onClick={(e) => handleRoomClick(e, 'Room 6')}
-              className="absolute top-[35%] left-[70%] w-[10%] h-[20%] sm:w-[8%] sm:h-[15%] md:w-[6%] md:h-[12%] lg:w-[13%] lg:h-[38%] rotate-[124deg] bg-pink-800 bg-opacity-50 cursor-pointer rounded"
+              className="absolute top-[35%] left-[70%] w-[10%] h-[20%] sm:w-[8%] sm:h-[15%] md:w-[6%] md:h-[12%] lg:w-[13%] lg:h-[38%] rotate-[124deg] bg-black bg-opacity-0 hover:bg-opacity-10 cursor-pointer rounded"
               title="Room 6"
             ></div>
           </div>

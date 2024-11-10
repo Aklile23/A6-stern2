@@ -26,6 +26,7 @@ const FileExplorer: React.FC = () => {
       ],
       pointclouds: [
         { src: "/PCD/20241007/Room 2.glb", type: "pointcloud" },
+        { src: "/PCD/20241007/Room 3.glb", type: "pointcloud" },
        
       ],
     },
@@ -38,7 +39,7 @@ const FileExplorer: React.FC = () => {
         { src: "/Images/thumbnails/20241009/room06.jpg", type: "image" },
       ],
       pointclouds: [
-        
+        { src: "/PCD/20241009/Room 2.glb", type: "pointcloud" },
       ],
     },
     "2024-10-11": {

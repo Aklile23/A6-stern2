@@ -27,6 +27,7 @@ const CompareFileExplorer: React.FC<CompareFileExplorerProps> = ({ selectedDate,
       ],
       pointclouds: [
         { src: "/PCD/20241007/Room 2.glb", type: "pointcloud" },
+        { src: "/PCD/20241007/Room 3.glb", type: "pointcloud" },
         
       ],
     },
@@ -39,7 +40,7 @@ const CompareFileExplorer: React.FC<CompareFileExplorerProps> = ({ selectedDate,
         { src: "/Images/thumbnails/20241009/room06.jpg", type: "image" },
       ],
       pointclouds: [
-        
+        { src: "/PCD/20241009/Room 2.glb", type: "pointcloud" },
       ],
     },
     "2024-10-11": {

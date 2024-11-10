@@ -17,11 +17,11 @@ type MediaFiles = {
 const fileTreeData: Record<string, MediaFiles> = {
   "2024-10-07": {
     images: ["room02.jpg", "room03.jpg"],
-    pointclouds: ["Room 2.glb"]
+    pointclouds: ["Room 2.glb", "Room 3.glb"]
   },
   "2024-10-09": {
     images: ["room02.jpg", "room03.jpg", "room04.jpg", "room05.jpg", "room06.jpg"],
-    pointclouds: ["pointcloud02.obj"]
+    pointclouds: ["Room 2.glb"]
   },
   "2024-10-11": {
     images: ["room02.jpg", "room03.jpg", "room04.jpg", "room06.jpg"],

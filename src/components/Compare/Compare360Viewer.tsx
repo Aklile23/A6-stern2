@@ -6,6 +6,7 @@ import { TextureLoader, BackSide, WebGLRenderer, Scene, Camera } from 'three';
 interface Compare360ViewerProps {
   imageUrl: string;
   onClose: () => void;
+  onScreenshotsUpdate?: (screenshots: string[]) => void; // Add this line
 }
 
 const PanoramicSphere: React.FC<{ imageUrl: string }> = ({ imageUrl }) => {
@@ -35,13 +36,14 @@ const ScreenshotHelper: React.FC<{ setRefs: (gl: WebGLRenderer, scene: Scene, ca
   return null;
 };
 
-const Compare360Viewer: React.FC<Compare360ViewerProps> = ({ imageUrl, onClose }) => {
+const Compare360Viewer: React.FC<Compare360ViewerProps> = ({ imageUrl, onClose, onScreenshotsUpdate }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const viewerRef = useRef<HTMLDivElement>(null);
   const [isToolbarOpen, setIsToolbarOpen] = useState(false);
   const [gl, setGl] = useState<WebGLRenderer | null>(null);
   const [scene, setScene] = useState<Scene | null>(null);
   const [camera, setCamera] = useState<Camera | null>(null);
+  const [capturedScreenshots, setCapturedScreenshots] = useState<string[]>([]);
 
   const fileName = imageUrl.split('/').pop();
   const folderName = imageUrl.split('/')[3];
@@ -61,6 +63,16 @@ const Compare360Viewer: React.FC<Compare360ViewerProps> = ({ imageUrl, onClose }
     if (gl && scene && camera) {
       gl.render(scene, camera);
       const dataUrl = gl.domElement.toDataURL("image/png");
+
+      // Update screenshots array and pass it to parent via onScreenshotsUpdate
+      setCapturedScreenshots((prevScreenshots) => {
+        const newScreenshots = [...prevScreenshots, dataUrl];
+        if (onScreenshotsUpdate) {
+          onScreenshotsUpdate(newScreenshots);  // Pass updated screenshots to ComparePage
+        }
+        return newScreenshots;
+      });
+
       const link = document.createElement("a");
       link.href = dataUrl;
       link.download = "screenshot.png";
@@ -79,7 +91,6 @@ const Compare360Viewer: React.FC<Compare360ViewerProps> = ({ imageUrl, onClose }
 
   return (
     <div ref={viewerRef} className="w-full h-full relative bg-gray-700 rounded-lg overflow-hidden shadow-lg">
-      
       <div className="absolute top-4 left-1/2 transform -translate-x-1/2 text-center bg-white dark:bg-gray-800 p-2 rounded-lg shadow-md z-999">
         <p className="text-sm text-black dark:text-gray-300">
           Viewing: <span className="font-semibold">{fileName}</span>
@@ -105,8 +116,8 @@ const Compare360Viewer: React.FC<Compare360ViewerProps> = ({ imageUrl, onClose }
 
       {isToolbarOpen && (
         <div className="flex flex-col space-y-4 right-1.5 pt-3 top-12 absolute rounded-lg shadow-lg z-999 px-2">
-            {/* Area Measure Icon */}
-            <button className="bg-primary text-white w-10 h-10 rounded-lg shadow-lg flex items-center justify-center hover:bg-opacity-80 transition">
+          {/* Area Measure Icon */}
+          <button className="bg-primary text-white w-10 h-10 rounded-lg shadow-lg flex items-center justify-center hover:bg-opacity-80 transition">
             <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="#ffffff" width="18" height="18">
                 <path d="M4,12L4,13L12,13L12,12L13,12L13,4L12,4L12,3L4,3L4,4L3,4L3,12L4,12ZM7,7L9,7L9,9L7,9L7,7ZM16,12L16,16L12,16L12,15L4,15L4,16L0,16L0,12L1,12L1,4L0,4L0,0L4,0L4,1L12,1L12,0L16,0L16,4L15,4L15,12L16,12Z"></path>
             </svg>
@@ -136,11 +147,11 @@ const Compare360Viewer: React.FC<Compare360ViewerProps> = ({ imageUrl, onClose }
                     <path d="M482.406,484.449H117.844c-3.906,0-7.063,3.156-7.063,7.063v13.438c0,3.891,3.156,7.047,7.063,7.047h364.563 c3.906,0,7.063-3.156,7.063-7.047v-13.438C489.469,487.605,486.313,484.449,482.406,484.449z"></path>
                 </svg>
             </button>
-            
-            {/* Screenshott Icon */}
-            <button onClick={takeScreenshot} className="bg-primary text-white p-2 rounded-lg shadow-lg hover:bg-opacity-80 transition -mb-2">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#ffffff" stroke="#ffffff"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path fill="none" d="M0 0h24v24H0z"></path> <path d="M3 3h2v2H3V3zm4 0h2v2H7V3zm4 0h2v2h-2V3zm4 0h2v2h-2V3zm4 0h2v2h-2V3zm0 4h2v2h-2V7zM3 19h2v2H3v-2zm0-4h2v2H3v-2zm0-4h2v2H3v-2zm0-4h2v2H3V7zm7.667 4l1.036-1.555A1 1 0 0 1 12.535 9h2.93a1 1 0 0 1 .832.445L17.333 11H20a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1h2.667zM9 19h10v-6h-2.737l-1.333-2h-1.86l-1.333 2H9v6zm5-1a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"></path> </g> </g></svg>
-            </button>
+          <button onClick={takeScreenshot} className="bg-primary text-white p-2 rounded-lg shadow-lg hover:bg-opacity-80 transition -mb-2">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#ffffff" stroke="#ffffff">
+              <path d="M3 3h2v2H3V3zm4 0h2v2H7V3zm4 0h2v2h-2V3zm4 0h2v2h-2V3zm4 0h2v2h-2V3zm0 4h2v2h-2V7zM3 19h2v2H3v-2zm0-4h2v2H3v-2zm0-4h2v2H3v-2zm0-4h2v2H3V7zm7.667 4l1.036-1.555A1 1 0 0 1 12.535 9h2.93a1 1 0 0 1 .832.445L17.333 11H20a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1h2.667zM9 19h10v-6h-2.737l-1.333-2h-1.86l-1.333 2H9v6zm5-1a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"></path>
+            </svg>
+          </button>
         </div>
       )}
 
@@ -159,19 +170,11 @@ const Compare360Viewer: React.FC<Compare360ViewerProps> = ({ imageUrl, onClose }
       >
         {isFullscreen ? (
           <svg fill="#ffffff" height="24px" width="24px" viewBox="0 0 385.331 385.331" xmlns="http://www.w3.org/2000/svg">
-          <path d="M264.943,156.665h108.273c6.833,0,11.934-5.39,11.934-12.211c0-6.833-5.101-11.85-11.934-11.838h-96.242V36.181
-                  c0-6.833-5.197-12.03-12.03-12.03s-12.03,5.197-12.03,12.03v108.273c0,0.036,0.012,0.06,0.012,0.084
-                  c0,0.036-0.012,0.06-0.012,0.096C252.913,151.347,258.23,156.677,264.943,156.665z"></path>
-          <path d="M120.291,24.247c-6.821,0-11.838,5.113-11.838,11.934v96.242H12.03c-6.833,0-12.03,5.197-12.03,12.03
-                  c0,6.833,5.197,12.03,12.03,12.03h108.273c0.036,0,0.06-0.012,0.084-0.012c0.036,0,0.06,0.012,0.096,0.012
-                  c6.713,0,12.03-5.317,12.03-12.03V36.181C132.514,29.36,127.124,24.259,120.291,24.247z"></path>
-          <path d="M120.387,228.666H12.115c-6.833,0.012-11.934,5.39-11.934,12.223c0,6.833,5.101,11.85,11.934,11.838h96.242v96.423
-                  c0,6.833,5.197,12.03,12.03,12.03c6.833,0,12.03-5.197,12.03-12.03V240.877c0-0.036-0.012-0.06-0.012-0.084
-                  c0-0.036,0.012-0.06,0.012-0.096C132.418,233.983,127.1,228.666,120.387,228.666z"></path>
-          <path d="M373.3,228.666H265.028c-0.036,0-0.06,0.012-0.084,0.012c-0.036,0-0.06-0.012-0.096-0.012
-                  c-6.713,0-12.03,5.317-12.03,12.03v108.273c0,6.833,5.39,11.922,12.223,11.934c6.821,0.012,11.838-5.101,11.838-11.922v-96.242
-                  H373.3c6.833,0,12.03-5.197,12.03-12.03S380.134,228.678,373.3,228.666z"></path>
-        </svg>
+            <path d="M264.943,156.665h108.273c6.833,0,11.934-5.39,11.934-12.211c0-6.833-5.101-11.85-11.934-11.838h-96.242V36.181 c0-6.833-5.197-12.03-12.03-12.03s-12.03,5.197-12.03,12.03v108.273c0,0.036,0.012,0.06,0.012,0.084 c0,0.036-0.012,0.06-0.012,0.096C252.913,151.347,258.23,156.677,264.943,156.665z"></path>
+            <path d="M120.291,24.247c-6.821,0-11.838,5.113-11.838,11.934v96.242H12.03c-6.833,0-12.03,5.197-12.03,12.03 c0,6.833,5.197,12.03,12.03,12.03h108.273c0.036,0,0.06-0.012,0.084-0.012c0.036,0,0.06,0.012,0.096,0.012 c6.713,0,12.03-5.317,12.03-12.03V36.181C132.514,29.36,127.124,24.259,120.291,24.247z"></path>
+            <path d="M120.387,228.666H12.115c-6.833,0.012-11.934,5.39-11.934,12.223c0,6.833,5.101,11.85,11.934,11.838h96.242v96.423 c0,6.833,5.197,12.03,12.03,12.03c6.833,0,12.03-5.197,12.03-12.03V240.877c0-0.036-0.012-0.06-0.012-0.084 c0-0.036,0.012-0.06,0.012-0.096C132.418,233.983,127.1,228.666,120.387,228.666z"></path>
+            <path d="M373.3,228.666H265.028c-0.036,0-0.06,0.012-0.084,0.012c-0.036,0-0.06-0.012-0.096-0.012 c-6.713,0-12.03,5.317-12.03,12.03v108.273c0,6.833,5.39,11.922,12.223,11.934c6.821,0.012,11.838-5.101,11.838-11.922v-96.242 H373.3c6.833,0,12.03-5.197,12.03-12.03S380.134,228.678,373.3,228.666z"></path>
+          </svg>
         ) : (
           <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" className="w-5 h-5">
             <path d="M4 4h5V2H2v7h2V4zm15 0h-5V2h7v7h-2V4zM4 20h5v2H2v-7h2v5zm15-5h2v7h-7v-2h5z" />

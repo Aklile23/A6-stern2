@@ -30,19 +30,51 @@ const StaticViewer: React.FC = () => {
 
   const generatePDFReport = () => {
     const doc = new jsPDF();
-    doc.setFontSize(14);
-    doc.text('Static Viewer Report', 10, 10);
-    doc.setFontSize(12);
+    const currentDate = new Date().toLocaleDateString();
+  
+    // Header with title and date
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.setTextColor(40);
+    doc.text('2D Viewer Report', 105, 15, { align: 'center' });
+  
+    // Date and section underline
+    doc.setFontSize(10);
+    doc.setTextColor(60);
+    doc.text(`Date: ${currentDate}`, 10, 25);
+    doc.setDrawColor(200);
+    doc.setLineWidth(0.5);
+    doc.line(10, 30, 200, 30); // Underline
+  
+    // Section: Automatic Labeling
     if (includeAutoLabeling) {
-      doc.text('Automatic Labeling:', 10, 20);
-      doc.text(autoLabelingText, 10, 30);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(12);
+      doc.setTextColor(60);
+      doc.text('Automatic Labeling:', 10, 40);
+  
+      doc.setFont("helvetica", "italic");
+      doc.setFontSize(11);
+      doc.text(autoLabelingText || "No automatic labeling information provided.", 10, 50, { maxWidth: 180 });
     }
+  
+    // Section: Additional Comments
     if (includeAdditionalComments) {
-      doc.text('Additional Comments:', 10, 50);
-      doc.text(additionalCommentsText, 10, 60);
+      const commentsStartY = includeAutoLabeling ? 80 : 60;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(12);
+      doc.setTextColor(60);
+      doc.text('Additional Comments:', 10, commentsStartY);
+  
+      doc.setFont("helvetica", "italic");
+      doc.setFontSize(11);
+      doc.text(additionalCommentsText || "No additional comments provided.", 10, commentsStartY + 10, { maxWidth: 180 });
     }
-    doc.save('StaticViewer_Report.pdf');
+  
+    // Save the PDF
+    doc.save('2DViewer_Report.pdf');
   };
+  
 
   const handleModalPublish = () => {
     if (!includeAutoLabeling && !includeAdditionalComments) {
@@ -51,6 +83,10 @@ const StaticViewer: React.FC = () => {
       generatePDFReport();
       closePublishModal();
     }
+  };
+
+  const handleGenerateAutomaticLabeling = () => {
+    setAutoLabelingText("Generated labeling text goes here..."); // Replace with actual logic as needed
   };
 
   return (
@@ -88,10 +124,13 @@ const StaticViewer: React.FC = () => {
       </div>
 
       {/* Input fields under the viewer */}
-      <div className="flex w-full mt-6 space-x-4">
-        {/* First Input Field */}
-        <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Automatic Labeling</label>
+      <div className="flex w-full space-x-4 mt-7">
+        
+        {/* Automatic Labeling Section */}
+        <div className="flex-1 p-4 border border-gray-300 dark:border-strokedark rounded-lg bg-gray-50 dark:bg-gray-800">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Automatic Labeling
+          </label>
           <textarea
             rows={5}
             placeholder="Enter comments"
@@ -99,11 +138,20 @@ const StaticViewer: React.FC = () => {
             value={autoLabelingText}
             onChange={(e) => setAutoLabelingText(e.target.value)}
           />
+          {/* Generate Button */}
+          <button
+            onClick={handleGenerateAutomaticLabeling}
+            className="mt-2 bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-transform duration-300 hover:bg-indigo-700"
+          >
+            Generate
+          </button>
         </div>
 
-        {/* Second Input Field with Checkbox and Publish Button */}
-        <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Additional Comments</label>
+        {/* Additional Comments Section */}
+        <div className="flex-1 p-4 rounded-md ">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Additional Comments
+          </label>
           <textarea
             rows={5}
             placeholder="Enter comments"
@@ -113,11 +161,10 @@ const StaticViewer: React.FC = () => {
           />
         </div>
       </div>
-
-      {/* Publish Button */}
-      <div className="flex justify-end mt-6">
+      {/* Publish Button for the Entire Form */}
+      <div className="flex justify-end mr-5 -mt-13 mb-3">
         <button
-          onClick={openPublishModal}
+          onClick={() => openPublishModal()}
           className="bg-primary text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-transform duration-300 hover:bg-opacity-60"
         >
           Publish

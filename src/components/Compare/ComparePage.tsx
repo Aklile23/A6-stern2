@@ -33,6 +33,13 @@ const ComparePage: React.FC = () => {
   const [validationMessage, setValidationMessage] = useState<string | null>(null);
   const [notes, setNotes] = useState<string>(''); // Store the user's notes
 
+  const [leftViewerScreenshots, setLeftViewerScreenshots] = useState<string[]>([]);
+  const [rightViewerScreenshots, setRightViewerScreenshots] = useState<string[]>([]);
+
+  const handleLeftScreenshot = (screenshots: string[]) => setLeftViewerScreenshots(screenshots);
+  const handleRightScreenshot = (screenshots: string[]) => setRightViewerScreenshots(screenshots);
+
+
   const handleLeftDateSelect = (date: string) => {
     setLeftSelectedDate(date);
     setLeftSelectedFile(null);
@@ -90,12 +97,96 @@ const ComparePage: React.FC = () => {
     if (!includeImages && !includeNotes) {
       setValidationMessage('Please select at least one option to include in the report.');
     } else {
+      const doc = new jsPDF();
+      const currentDate = new Date().toLocaleDateString();
+  
+      // Set up fonts, colors, and initial styling
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      doc.setTextColor(40);
+      doc.text('Comparison Report', 105, 15, { align: 'center' });
+  
+      // Date and Header Line
+      doc.setFontSize(10);
+      doc.setTextColor(60);
+      doc.text(`Date: ${currentDate}`, 10, 25);
+      doc.setDrawColor(200);
+      doc.setLineWidth(0.5);
+      doc.line(10, 30, 200, 30); // Underline
+  
+      // Section: Notes
       if (includeNotes) {
-        generatePDFWithNotes();
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(12);
+        doc.setTextColor(60);
+        doc.text('Notes:', 10, 40);
+  
+        doc.setFont("helvetica", "italic");
+        doc.setFontSize(11);
+        doc.text(notes || "No notes provided.", 10, 50, { maxWidth: 180 });
       }
+  
+      // Section: Left Viewer Screenshots
+      if (includeImages && leftViewerScreenshots.length > 0) {
+        let yPosition = includeNotes ? 80 : 60;
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(40);
+        doc.text('Left Viewer Screenshots:', 10, yPosition);
+        yPosition += 10;
+  
+        leftViewerScreenshots.forEach((screenshot, index) => {
+          if (yPosition > 250) {
+            doc.addPage();
+            yPosition = 20;
+          }
+          doc.addImage(screenshot, 'PNG', 10, yPosition, 90, 45);
+          yPosition += 50;
+  
+          // Save each screenshot
+          const link = document.createElement("a");
+          link.href = screenshot;
+          link.download = `Left_Screenshot_${index + 1}.png`;
+          link.click();
+        });
+      }
+  
+      // Section: Right Viewer Screenshots
+      if (includeImages && rightViewerScreenshots.length > 0) {
+        let yPosition = includeNotes ? 80 : 60;
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(40);
+        doc.text('Right Viewer Screenshots:', 110, yPosition);
+        yPosition += 10;
+  
+        rightViewerScreenshots.forEach((screenshot, index) => {
+          if (yPosition > 250) {
+            doc.addPage();
+            yPosition = 20;
+          }
+          doc.addImage(screenshot, 'PNG', 110, yPosition, 90, 45);
+          yPosition += 50;
+  
+          // Save each screenshot
+          const link = document.createElement("a");
+          link.href = screenshot;
+          link.download = `Right_Screenshot_${index + 1}.png`;
+          link.click();
+        });
+      }
+  
+      // Save the PDF
+      doc.save('Comparison_Report.pdf');
+  
+      // Clear screenshots and close modal
+      setLeftViewerScreenshots([]);
+      setRightViewerScreenshots([]);
       closePublishModal();
     }
   };
+  
+
 
   return (
     <div className="w-full max-w-screen-3xl bg-white rounded-md shadow-default dark:bg-boxdark dark:text-white p-4 mx-auto mt-6">
@@ -125,7 +216,7 @@ const ComparePage: React.FC = () => {
               {showLeftPCDViewer ? (
                 <ComparePCDViewer modelUrl={leftHDImageUrl as string} onClose={() => setShowLeftPCDViewer(false)} />
               ) : showLeft360Viewer ? (
-                <Compare360Viewer imageUrl={leftHDImageUrl as string} onClose={handleCloseLeft360Viewer} />
+                <Compare360Viewer imageUrl={leftHDImageUrl as string} onClose={handleCloseLeft360Viewer} onScreenshotsUpdate={handleLeftScreenshot} />
               ) : (
                 leftSelectedDate && (
                   <CompareFileExplorer
@@ -156,7 +247,7 @@ const ComparePage: React.FC = () => {
               {showRightPCDViewer ? (
                 <ComparePCDViewer modelUrl={rightHDImageUrl as string} onClose={() => setShowRightPCDViewer(false)} />
               ) : showRight360Viewer ? (
-                <Compare360Viewer imageUrl={rightHDImageUrl as string} onClose={handleCloseRight360Viewer} />
+                <Compare360Viewer imageUrl={rightHDImageUrl as string} onClose={handleCloseRight360Viewer} onScreenshotsUpdate={handleRightScreenshot} />
               ) : (
                 rightSelectedDate && (
                   <CompareFileExplorer

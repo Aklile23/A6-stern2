@@ -23,7 +23,7 @@ const Aframe_IntViewer: React.FC = () => {
 
   const [notes, setNotes] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [includeNotes, setIncludeNotes] = useState(false);
+  const [includeNotes, setIncludeNotes] = useState(true);
   const [includeScreenshot, setIncludeScreenshot] = useState(false);
 
   const openPublishModal = () => setIsModalOpen(true);
@@ -35,28 +35,57 @@ const Aframe_IntViewer: React.FC = () => {
 
   const handleModalPublish = () => {
     const doc = new jsPDF();
-    doc.setFontSize(14);
-    doc.text('Point Cloud Viewer Report', 10, 10);
+    const currentDate = new Date().toLocaleDateString();
   
-    // Include notes if checked
+    // Title and Date Header
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.setTextColor(40);
+    doc.text('Point Cloud Viewer Report', 105, 15, { align: 'center' });
+  
+    doc.setFontSize(10);
+    doc.setTextColor(60);
+    doc.text(`Date: ${currentDate}`, 10, 25);
+  
+    // Header line
+    doc.setDrawColor(200);
+    doc.setLineWidth(0.5);
+    doc.line(10, 30, 200, 30);
+  
+    // Section: Notes
     if (includeNotes) {
+      doc.setFont("helvetica", "normal");
       doc.setFontSize(12);
-      doc.text('Notes:', 10, 20);
-      doc.text(notes, 10, 30);
+      doc.setTextColor(60);
+      doc.text('Notes:', 10, 40);
+  
+      doc.setFont("helvetica", "italic");
+      doc.setFontSize(11);
+      doc.text(notes || "No notes provided.", 10, 50, { maxWidth: 180 });
     }
   
-    // Include screenshot if checked
+    // Section: Screenshot
     if (includeScreenshot) {
       const canvas = document.querySelector('canvas');
       if (canvas) {
         const screenshotDataUrl = canvas.toDataURL('image/png');
-        doc.addImage(screenshotDataUrl, 'PNG', 10, 50, 180, 90);
+        
+        // Adjust y-position based on the presence of notes
+        const screenshotYPosition = includeNotes ? 80 : 50;
+        doc.setFontSize(12);
+        doc.setTextColor(60);
+        doc.text('Screenshot:', 10, screenshotYPosition - 10);
+  
+        // Add screenshot image at calculated position
+        doc.addImage(screenshotDataUrl, 'PNG', 10, screenshotYPosition, 180, 90);
       }
     }
   
+    // Save the PDF
     doc.save('PointCloudViewer_Report.pdf');
     closePublishModal();
   };
+  
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -143,7 +172,7 @@ const Aframe_IntViewer: React.FC = () => {
           <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg max-w-md w-full">
             <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-200">Publish Report</h2>
             
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <label className="flex items-center space-x-2">
                 <input
                   type="checkbox"
@@ -162,7 +191,7 @@ const Aframe_IntViewer: React.FC = () => {
                 />
                 <span className="text-gray-700 dark:text-gray-300">Include Notes</span>
               </label>
-            </div>
+            </div> */}
 
             <div className="flex justify-end space-x-3 mt-4">
               <button

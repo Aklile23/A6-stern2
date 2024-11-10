@@ -53,6 +53,10 @@ const InteractiveViewer: React.FC = () => {
   const [includeScreenshot, setIncludeScreenshot] = useState(false);
   const [notes, setNotes] = useState('');
 
+  const [capturedScreenshot, setCapturedScreenshot] = useState<string | null>(null);
+  const [capturedScreenshots, setCapturedScreenshots] = useState<string[]>([]);
+
+
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       viewerRef.current?.requestFullscreen();
@@ -67,6 +71,7 @@ const InteractiveViewer: React.FC = () => {
     if (gl && scene && camera) {
       gl.render(scene, camera);
       const dataUrl = gl.domElement.toDataURL("image/png");
+      setCapturedScreenshots((prevScreenshots) => [...prevScreenshots, dataUrl]); // Append new screenshot
       const link = document.createElement("a");
       link.href = dataUrl;
       link.download = "screenshot.png";
@@ -84,24 +89,64 @@ const InteractiveViewer: React.FC = () => {
 
   const handleModalPublish = () => {
     const doc = new jsPDF();
-    doc.setFontSize(14);
-    doc.text('Interactive Viewer Report', 10, 10);
+  
+    // Set up fonts and colors
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.setTextColor(40);
 
+    // Header
+    doc.text('360 Viewer Report', 105, 15, { align: 'center' });
+    doc.setFontSize(10);
+    const currentDate = new Date().toLocaleDateString();
+    doc.text(`Date: ${currentDate}`, 10, 25);
+    
+    // Section: Notes
+    doc.setDrawColor(200); // Light gray for section lines
+    doc.setLineWidth(0.5);
+    doc.line(10, 30, 200, 30); // Line under header
+    
+    doc.setFontSize(12);
+    doc.setTextColor(60);
+    doc.setFont("helvetica", "normal");
+    doc.text('Notes:', 10, 40);
+
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(11);
+    doc.text(notes || "No notes provided.", 10, 50, { maxWidth: 180 });
+  
     if (includeNotes) {
       doc.setFontSize(12);
-      doc.text('Notes:', 10, 20);
-      doc.text(notes, 10, 30);
+      doc.text('Notes:', 10, 40);
+      doc.setFontSize(11);
+      doc.text(notes || "No notes provided.", 10, 50, { maxWidth: 180 });
     }
-
-    if (includeScreenshot && gl && scene && camera) {
-      gl.render(scene, camera);
-      const screenshotDataUrl = gl.domElement.toDataURL("image/png");
-      doc.addImage(screenshotDataUrl, 'PNG', 10, 50, 180, 90);
+  
+    // Add each screenshot to the PDF
+    if (includeScreenshot && capturedScreenshots.length > 0) {
+      doc.setFontSize(12);
+      doc.text('Screenshots:', 10, 80);
+      let yPosition = 90;
+  
+      capturedScreenshots.forEach((screenshot, index) => {
+        if (yPosition > 250) { // Move to new page if needed
+          doc.addPage();
+          yPosition = 20;
+        }
+        doc.addImage(screenshot, 'PNG', 10, yPosition, 180, 90);
+        yPosition += 100; // Adjust spacing between screenshots
+      });
     }
-
-    doc.save('InteractiveViewer_Report.pdf');
+  
+    // Save the PDF
+    doc.save('360_Report.pdf');
+  
+    // Clear the screenshots array after publishing
+    setCapturedScreenshots([]);
     closePublishModal();
   };
+  
+  
 
   useEffect(() => {
     const handleFullscreenChange = () => {

@@ -69,8 +69,11 @@ const CompareFileExplorer: React.FC<CompareFileExplorerProps> = ({ selectedDate,
               key={index}
               className="flex flex-col cursor-pointer"
               onClick={() => {
-                console.log("HD Image Path:", hdImagePath); // Log HD image path to console
-                onFileSelect(hdImagePath); // Trigger HD image view with HD path
+                if (thumbnail.type === 'pointcloud') {
+                  onFileSelect(thumbnail.src); // Send PCD file URL for comparison viewing
+                } else {
+                  onFileSelect(hdImagePath); // Handle images
+                }
               }}
             >
               <Thumbnail src={thumbnail.src} type={thumbnail.type} />

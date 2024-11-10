@@ -4,6 +4,7 @@ import CompareFileExplorer from './CompareFileExplorer';
 import Compare360Viewer from './Compare360Viewer';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
+import ComparePCDViewer from './ComparePCDViewer';
 
 const ComparePage: React.FC = () => {
   const availableDates = ['2024-10-07', '2024-10-09', '2024-10-11', '2024-10-14', '2024-10-16', '2024-10-18', '2024-10-21', '2024-10-23', '2024-10-25', '2024-10-28', '2024-11-01'];
@@ -21,6 +22,9 @@ const ComparePage: React.FC = () => {
 
   const [leftHDImageUrl, setLeftHDImageUrl] = useState<string | null>(null);
   const [rightHDImageUrl, setRightHDImageUrl] = useState<string | null>(null);
+
+  const [showLeftPCDViewer, setShowLeftPCDViewer] = useState(false);
+  const [showRightPCDViewer, setShowRightPCDViewer] = useState(false);  
 
   // State for modal and checkboxes
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,14 +45,24 @@ const ComparePage: React.FC = () => {
     setShowRightCalendar(false);
   };
 
-  const handleLeftThumbnailClick = (hdImageUrl: string) => {
-    setLeftHDImageUrl(hdImageUrl);
-    setShowLeft360Viewer(true);
+  const handleLeftThumbnailClick = (fileUrl: string) => {
+    if (fileUrl.endsWith('.glb') || fileUrl.endsWith('.obj') || fileUrl.endsWith('.e57')) {
+      setLeftHDImageUrl(fileUrl);
+      setShowLeftPCDViewer(true);
+    } else {
+      setLeftHDImageUrl(fileUrl);
+      setShowLeft360Viewer(true);
+    }
   };
-
-  const handleRightThumbnailClick = (hdImageUrl: string) => {
-    setRightHDImageUrl(hdImageUrl);
-    setShowRight360Viewer(true);
+  
+  const handleRightThumbnailClick = (fileUrl: string) => {
+    if (fileUrl.endsWith('.glb') || fileUrl.endsWith('.obj') || fileUrl.endsWith('.e57')) {
+      setRightHDImageUrl(fileUrl);
+      setShowRightPCDViewer(true);
+    } else {
+      setRightHDImageUrl(fileUrl);
+      setShowRight360Viewer(true);
+    }
   };
 
   const handleCloseLeft360Viewer = () => setShowLeft360Viewer(false);
@@ -108,18 +122,17 @@ const ComparePage: React.FC = () => {
             </>
           ) : (
             <>
-              {showLeft360Viewer ? (
-                <Compare360Viewer 
-                  imageUrl={leftHDImageUrl as string} 
-                  onClose={handleCloseLeft360Viewer} 
-                />
+              {showLeftPCDViewer ? (
+                <ComparePCDViewer modelUrl={leftHDImageUrl as string} onClose={() => setShowLeftPCDViewer(false)} />
+              ) : showLeft360Viewer ? (
+                <Compare360Viewer imageUrl={leftHDImageUrl as string} onClose={handleCloseLeft360Viewer} />
               ) : (
                 leftSelectedDate && (
-                  <CompareFileExplorer 
-                    selectedDate={leftSelectedDate} 
-                    onFileSelect={handleLeftThumbnailClick} 
+                  <CompareFileExplorer
+                    selectedDate={leftSelectedDate}
+                    onFileSelect={handleLeftThumbnailClick}
                     className="w-full h-full"
-                    onBackToCalendar={() => setShowLeftCalendar(true)} // Back to calendar for left view
+                    onBackToCalendar={() => setShowLeftCalendar(true)}
                   />
                 )
               )}
@@ -140,18 +153,17 @@ const ComparePage: React.FC = () => {
             </>
           ) : (
             <>
-              {showRight360Viewer ? (
-                <Compare360Viewer 
-                  imageUrl={rightHDImageUrl as string} 
-                  onClose={handleCloseRight360Viewer} 
-                />
+              {showRightPCDViewer ? (
+                <ComparePCDViewer modelUrl={rightHDImageUrl as string} onClose={() => setShowRightPCDViewer(false)} />
+              ) : showRight360Viewer ? (
+                <Compare360Viewer imageUrl={rightHDImageUrl as string} onClose={handleCloseRight360Viewer} />
               ) : (
                 rightSelectedDate && (
-                  <CompareFileExplorer 
-                    selectedDate={rightSelectedDate} 
-                    onFileSelect={handleRightThumbnailClick} 
+                  <CompareFileExplorer
+                    selectedDate={rightSelectedDate}
+                    onFileSelect={handleRightThumbnailClick}
                     className="w-full h-full"
-                    onBackToCalendar={() => setShowRightCalendar(true)} // Back to calendar for right view
+                    onBackToCalendar={() => setShowRightCalendar(true)}
                   />
                 )
               )}

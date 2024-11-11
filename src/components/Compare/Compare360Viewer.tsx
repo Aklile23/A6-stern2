@@ -73,10 +73,10 @@ const Compare360Viewer: React.FC<Compare360ViewerProps> = ({ imageUrl, onClose, 
         return newScreenshots;
       });
 
-      const link = document.createElement("a");
-      link.href = dataUrl;
-      link.download = "screenshot.png";
-      link.click();
+      // const link = document.createElement("a");
+      // link.href = dataUrl;
+      // link.download = "screenshot.png";
+      // link.click();
     }
   };
 

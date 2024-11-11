@@ -4,6 +4,7 @@ import SidebarLinkGroup from './SidebarLinkGroup';
 import Calendar from '../../pages/Calendar';
 import { useNavigate } from 'react-router-dom';
 import { getHDImagePath } from '../../utils/pathutils'
+import FileTree from '../FileTree';
 
 
 // Define a type for the file structure
@@ -196,120 +197,8 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
 
           {/* File Tree Section */}
           {sidebarOpen && (
-  <div className="text-[#f5f5f7] rounded-lg w-full">
-    <h2
-      onClick={() => setFileTreeOpen((prev) => ({ ...prev, fileTree: !prev.fileTree }))}
-      className="flex items-center font-bold text-lg cursor-pointer px-4 py-2 transition-colors duration-200 hover:text-primary"
-    >
-      <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path d="M3 4a1 1 0 0 1 1-1h6.236a1 1 0 0 1 .707.293l1.414 1.414H20a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z"/>
-      </svg>
-      {sidebarOpen && "A6_stern"}
-    </h2>
-
-    {fileTreeOpen.fileTree && (
-      <div className="ml-4">
-        {Object.keys(fileTreeData).map((date) => (
-          <div key={date} className="mb-2">
-            <div
-              onClick={() => toggleDateNode(date)}
-              className="flex items-center cursor-pointer text-sm text-white hover:text-primary transition-colors duration-200 pl-4"
-            >
-              <svg
-                className={`transform transition-transform duration-200 mr-2 ${fileTreeOpen[date] ? 'rotate-90' : 'rotate-0'}`}
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M3 4a1 1 0 0 1 1-1h6.236a1 1 0 0 1 .707.293l1.414 1.414H20a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z"/>
-              </svg>
-              <span className="font-medium">{date}</span>
-            </div>
-
-            {fileTreeOpen[date] && (
-              <div className="ml-4 mt-2 border-l border-gray-600 pl-4">
-                {Object.entries(fileTreeData[date]!).map(([type, files]) => (
-                  <div key={type} className="mt-3">
-                    <div
-                      onClick={() =>
-                        setFileTreeOpen((prev) => ({
-                          ...prev,
-                          [`${date}-${type}`]: !prev[`${date}-${type}`],
-                        }))
-                      }
-                      className="flex items-center cursor-pointer text-xs text-gray-400 uppercase font-semibold mb-1 tracking-wide hover:text-primary transition duration-200"
-                    >
-                      <svg
-                        className={`transform transition-transform duration-200 mr-2 ${fileTreeOpen[`${date}-${type}`] ? 'rotate-90' : 'rotate-0'}`}
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path d="M3 4a1 1 0 0 1 1-1h6.236a1 1 0 0 1 .707.293l1.414 1.414H20a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z"/>
-                      </svg>
-                      <span>{type.charAt(0).toUpperCase() + type.slice(1)}</span>
-                    </div>
-
-                    {fileTreeOpen[`${date}-${type}`] && (
-                      <ul className="ml-4 space-y-1">
-                        {files!.map((file, index) => {
-                          const formattedDate = date.replace(/-/g, ''); // Ensure date format is correct for path
-                          
-                          // Construct path based on the file type
-                          const filePath = type === "pointclouds"
-                            ? `/PCD/${formattedDate}/${file}`  // Point cloud path format
-                            : `/Images/thumbnails/${formattedDate}/${file}`;  // Image path format
-
-                          return (
-                            <li key={index} className="flex items-center text-sm text-gray-300 hover:text-primary transition-colors duration-150">
-                              {type === "images" ? (
-                                <>
-                                  {/* Image Icon and Clickable for StaticViewer */}
-                                  <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M21 19V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 1 2-2zm-9-8l3.5 4.5H8l2.5-3z" />
-                                  </svg>
-                                  <button
-                                    onClick={() => navigate('/staticViewer', { state: { imageUrl: getHDImagePath(filePath) } })}
-                                    className="text-sm text-gray-300 hover:text-primary transition-colors duration-150"
-                                  >
-                                    {file}
-                                  </button>
-                                </>
-                              ) : type === "pointclouds" ? (
-                                <>
-                                  {/* Point Cloud Icon and Clickable for Aframe_IntViewer */}
-                                  <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zm2-6h-4v-4h4zm-2 2a6.61 6.61 0 0 0 3.66-1.18l1.07 1.07A7.93 7.93 0 0 1 12 20a7.93 7.93 0 0 1-4.73-1.61l1.07-1.07A6.61 6.61 0 0 0 12 16z" />
-                                  </svg>
-                                  <button
-                                    onClick={() => navigate('/PCDViewer', { state: { modelUrl: filePath } })}
-                                    className="text-sm text-gray-300 hover:text-primary transition-colors duration-150"
-                                  >
-                                    {file}
-                                  </button>
-                                </>
-                              ) : (
-                                <span>{file}</span> // Default display for other types
-                              )}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    )}
-  </div>
-)}
+            <FileTree />
+          )}
 
 
 

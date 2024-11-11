@@ -13,6 +13,9 @@ import InteractiveViewer from './components/InteractiveViewer';
 import StaticViewer from './components/StaticViewer';
 import ComparePage from './components/Compare/ComparePage';
 import Aframe_IntViewer from './components/Aframe_IntViewer';
+import RoomFileViewer from './pages/RoomFileViewer';
+import StaticViewerRoom from './components/staticViewerRoom';
+import InteractiveViewerRoom from './components/interactiveViewerRoom';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -60,12 +63,14 @@ function App() {
               element={
                 <>
                   <PageTitle title="Project Y | Projects Dashboard" />
-                  <Projecty />
+                  <RoomFileViewer room={''} />
                 </>
               }
             />
             <Route path="/interactiveViewer" element={<InteractiveViewer />} />
+            <Route path="/interactiveViewerRoom" element={<InteractiveViewerRoom />} />
             <Route path="/staticViewer" element={<StaticViewer />} />
+            <Route path="/staticViewerRoom" element={<StaticViewerRoom />} />
             <Route path="/Compare" element={<ComparePage />} />
             <Route path="/PCDViewer" element={<Aframe_IntViewer />} />
             

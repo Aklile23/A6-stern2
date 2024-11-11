@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import HomeCalendar from './HomeCalendar';
-import { Link } from 'react-router-dom';
 import ChartAll from '../components/Charts/Overview of data collected/ChartAll';
 import ChartLocation from '../components/Charts/Overview of data collected per location/ChartLocation';
-import Header from '../components/Header';
 import HomeHeader from '../components/Header/HomeHeader';
+import { useNavigate } from 'react-router-dom';
+
 
 const HomePage: React.FC = () => {
   const [calendarVisible, setCalendarVisible] = useState(false);
@@ -13,6 +13,7 @@ const HomePage: React.FC = () => {
 
   const [hoveredRoom, setHoveredRoom] = useState<string | null>(null);
   const roomRef = useRef<HTMLDivElement | null>(null);
+  const navigate = useNavigate();
 
   const updateCalendarPosition = (top: number, left: number) => {
     if (calendarPosition.top !== top || calendarPosition.left !== left) {
@@ -33,9 +34,11 @@ const HomePage: React.FC = () => {
   };
 
   const handleRoomClick = (e: React.MouseEvent<HTMLDivElement>, room: string) => {
+    e.stopPropagation();
     setPinnedCalendarPosition({ top: e.clientY, left: e.clientX });
-    console.log(`Room clicked: ${room}`);
+    navigate('/projecty', { state: { room } }); // Pass the room as state
   };
+  
 
   const handleOutsideClick = () => {
     setPinnedCalendarPosition(null);
@@ -95,49 +98,49 @@ const HomePage: React.FC = () => {
             {/* Colored Hotspots */}
             <div
               ref={roomRef}
-              onMouseEnter={(e) => handleRoomHover(e, 'room1')}
-              onMouseLeave={handleRoomLeave}
-              onClick={(e) => handleRoomClick(e, 'Room 1')}
+              // onMouseEnter={(e) => handleRoomHover(e, 'room1')}
+              // onMouseLeave={handleRoomLeave}
+              onClick={(e) => handleRoomClick(e, 'room1')}
               className="absolute top-[15%] left-[6.5%] w-[25%] h-[20%] sm:w-[4%] sm:h-[8%] md:w-[3%] md:h-[6%] lg:w-[13%] lg:h-[30%] bg-black bg-opacity-0 hover:bg-opacity-10 cursor-pointer rounded"
               title="Room 1"
             ></div>
 
             <div
-              onMouseEnter={(e) => handleRoomHover(e, 'room2')}
-              onMouseLeave={handleRoomLeave}
-              onClick={(e) => handleRoomClick(e, 'Room 2')}
+              // onMouseEnter={(e) => handleRoomHover(e, 'room2')}
+              // onMouseLeave={handleRoomLeave}
+              onClick={(e) => handleRoomClick(e, 'room2')}
               className="absolute top-[15%] left-[20.5%] w-[5%] h-[10%] sm:w-[4%] sm:h-[8%] md:w-[3%] md:h-[6%] lg:w-[10%] lg:h-[30%] bg-black bg-opacity-0 hover:bg-opacity-10 cursor-pointer rounded"
               title="Room 2"
             ></div>
 
             <div
-              onMouseEnter={(e) => handleRoomHover(e, 'room3')}
-              onMouseLeave={handleRoomLeave}
-              onClick={(e) => handleRoomClick(e, 'Room 3')}
+              // onMouseEnter={(e) => handleRoomHover(e, 'room3')}
+              // onMouseLeave={handleRoomLeave}
+              onClick={(e) => handleRoomClick(e, 'room3')}
               className="absolute top-[15%] left-[31%] w-[5%] h-[10%] sm:w-[4%] sm:h-[8%] md:w-[3%] md:h-[6%] lg:w-[10.5%] lg:h-[30%] bg-black bg-opacity-0 hover:bg-opacity-10 cursor-pointer rounded"
               title="Room 3"
             ></div>
 
             <div
-              onMouseEnter={(e) => handleRoomHover(e, 'room4')}
-              onMouseLeave={handleRoomLeave}
-              onClick={(e) => handleRoomClick(e, 'Room 4')}
+              // onMouseEnter={(e) => handleRoomHover(e, 'room4')}
+              // onMouseLeave={handleRoomLeave}
+              onClick={(e) => handleRoomClick(e, 'room4')}
               className="absolute top-[15%] left-[42.5%] w-[8%] h-[15%] sm:w-[6%] sm:h-[12%] md:w-[5%] md:h-[10%] lg:w-[9.5%] lg:h-[30%] bg-black bg-opacity-0 hover:bg-opacity-10 cursor-pointer rounded"
               title="Room 4"
             ></div>
 
             <div
-              onMouseEnter={(e) => handleRoomHover(e, 'room5')}
-              onMouseLeave={handleRoomLeave}
-              onClick={(e) => handleRoomClick(e, 'Room 5')}
+              // onMouseEnter={(e) => handleRoomHover(e, 'room5')}
+              // onMouseLeave={handleRoomLeave}
+              onClick={(e) => handleRoomClick(e, 'room5')}
               className="absolute top-[15%] left-[52.6%] w-[8%] h-[15%] sm:w-[6%] sm:h-[12%] md:w-[5%] md:h-[10%] lg:w-[9%] lg:h-[30%] bg-black bg-opacity-0 hover:bg-opacity-10  cursor-pointer rounded"
               title="Room 5"
             ></div>
 
             <div
-              onMouseEnter={(e) => handleRoomHover(e, 'room6')}
-              onMouseLeave={handleRoomLeave}
-              onClick={(e) => handleRoomClick(e, 'Room 6')}
+              // onMouseEnter={(e) => handleRoomHover(e, 'room6')}
+              // onMouseLeave={handleRoomLeave}
+              onClick={(e) => handleRoomClick(e, 'room6')}
               className="absolute top-[35%] left-[70%] w-[10%] h-[20%] sm:w-[8%] sm:h-[15%] md:w-[6%] md:h-[12%] lg:w-[13%] lg:h-[38%] rotate-[124deg] bg-black bg-opacity-0 hover:bg-opacity-10 cursor-pointer rounded"
               title="Room 6"
             ></div>

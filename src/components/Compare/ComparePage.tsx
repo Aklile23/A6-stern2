@@ -39,6 +39,10 @@ const ComparePage: React.FC = () => {
   const handleLeftScreenshot = (screenshots: string[]) => setLeftViewerScreenshots(screenshots);
   const handleRightScreenshot = (screenshots: string[]) => setRightViewerScreenshots(screenshots);
 
+  const [isSeparateNotes, setIsSeparateNotes] = useState(false); // New state for separate notes checkbox
+  const [leftNotes, setLeftNotes] = useState<string>(''); // New state for left view notes
+  const [rightNotes, setRightNotes] = useState<string>(''); // New state for right view notes
+
 
   const handleLeftDateSelect = (date: string) => {
     setLeftSelectedDate(date);
@@ -89,9 +93,22 @@ const ComparePage: React.FC = () => {
     doc.setFontSize(14);
     doc.text('Comparison Report Notes', 10, 10);
     doc.setFontSize(12);
-    doc.text(notes, 10, 20);
+    
+    if (isSeparateNotes) {
+      // Include separate notes for left and right views
+      doc.text('Left View Notes:', 10, 20);
+      doc.text(leftNotes || "No notes provided for Left View.", 10, 30, { maxWidth: 180 });
+  
+      doc.text('Right View Notes:', 10, 50);
+      doc.text(rightNotes || "No notes provided for Right View.", 10, 60, { maxWidth: 180 });
+    } else {
+      // Include general notes
+      doc.text(notes || "No general notes provided.", 10, 20, { maxWidth: 180 });
+    }
+  
     doc.save('Comparison_Report_Notes.pdf');
   };
+  
 
   const handleModalPublish = () => {
     if (!includeImages && !includeNotes) {
@@ -119,16 +136,32 @@ const ComparePage: React.FC = () => {
         doc.setFont("helvetica", "normal");
         doc.setFontSize(12);
         doc.setTextColor(60);
-        doc.text('Notes:', 10, 40);
   
-        doc.setFont("helvetica", "italic");
-        doc.setFontSize(11);
-        doc.text(notes || "No notes provided.", 10, 50, { maxWidth: 180 });
+        if (isSeparateNotes) {
+          // Separate notes for left and right views
+          doc.text('Left View Notes:', 10, 40);
+          doc.setFont("helvetica", "italic");
+          doc.setFontSize(11);
+          doc.text(leftNotes || "No notes provided for Left View.", 10, 50, { maxWidth: 180 });
+  
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(12);
+          doc.text('Right View Notes:', 10, 70);
+          doc.setFont("helvetica", "italic");
+          doc.setFontSize(11);
+          doc.text(rightNotes || "No notes provided for Right View.", 10, 80, { maxWidth: 180 });
+        } else {
+          // General notes
+          doc.text('Notes:', 10, 40);
+          doc.setFont("helvetica", "italic");
+          doc.setFontSize(11);
+          doc.text(notes || "No general notes provided.", 10, 50, { maxWidth: 180 });
+        }
       }
   
       // Section: Left Viewer Screenshots
       if (includeImages && leftViewerScreenshots.length > 0) {
-        let yPosition = includeNotes ? 80 : 60;
+        let yPosition = includeNotes ? (isSeparateNotes ? 100 : 80) : 60;
         doc.setFontSize(12);
         doc.setFont("helvetica", "bold");
         doc.setTextColor(40);
@@ -142,7 +175,7 @@ const ComparePage: React.FC = () => {
           }
           doc.addImage(screenshot, 'PNG', 10, yPosition, 90, 45);
           yPosition += 50;
-  
+          
           // Save each screenshot
           const link = document.createElement("a");
           link.href = screenshot;
@@ -153,7 +186,7 @@ const ComparePage: React.FC = () => {
   
       // Section: Right Viewer Screenshots
       if (includeImages && rightViewerScreenshots.length > 0) {
-        let yPosition = includeNotes ? 80 : 60;
+        let yPosition = includeNotes ? (isSeparateNotes ? 100 : 80) : 60;
         doc.setFontSize(12);
         doc.setFont("helvetica", "bold");
         doc.setTextColor(40);
@@ -167,7 +200,7 @@ const ComparePage: React.FC = () => {
           }
           doc.addImage(screenshot, 'PNG', 110, yPosition, 90, 45);
           yPosition += 50;
-  
+          
           // Save each screenshot
           const link = document.createElement("a");
           link.href = screenshot;
@@ -185,8 +218,6 @@ const ComparePage: React.FC = () => {
       closePublishModal();
     }
   };
-  
-
 
   return (
     <div className="w-full max-w-screen-3xl bg-white rounded-md shadow-default dark:bg-boxdark dark:text-white p-4 mx-auto mt-6">
@@ -203,10 +234,11 @@ const ComparePage: React.FC = () => {
           </svg>
         </button>
       </div>
-
+  
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+        {/* Left Viewer Section */}
         <div className="flex flex-col items-center justify-center w-full h-[70vh] bg-slate-100 dark:bg-gray-700 rounded-lg overflow-hidden shadow-lg">
-        {showLeftCalendar ? (
+          {showLeftCalendar ? (
             <>
               <CompareCalendar availableDates={availableDates} onDateSelect={handleLeftDateSelect} />
               <p className="text-gray-300 mt-4">{leftSelectedDate ? `Selected: ${leftSelectedDate}` : 'No date selected'}</p>
@@ -235,9 +267,10 @@ const ComparePage: React.FC = () => {
             </div>
           )}
         </div>
-
+  
+        {/* Right Viewer Section */}
         <div className="flex flex-col items-center justify-center w-full h-[70vh] bg-slate-100 dark:bg-gray-700 rounded-lg overflow-hidden shadow-lg">
-        {showRightCalendar ? (
+          {showRightCalendar ? (
             <>
               <CompareCalendar availableDates={availableDates} onDateSelect={handleRightDateSelect} />
               <p className="text-gray-300 mt-4">{rightSelectedDate ? `Selected: ${rightSelectedDate}` : 'No date selected'}</p>
@@ -267,8 +300,37 @@ const ComparePage: React.FC = () => {
           )}
         </div>
       </div>
-
-      <div className="w-full mt-6">
+  
+      {/* Checkbox for Separate Text Areas */}
+      <div className="flex items-center mb-3 mt-3 ml-2">
+        <input
+          type="checkbox"
+          checked={isSeparateNotes}
+          onChange={() => setIsSeparateNotes(!isSeparateNotes)}
+          className="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
+        />
+        <label className="ml-2 text-gray-700 dark:text-gray-300">Use separate Notes for each Items</label>
+      </div>
+  
+      {/* Conditionally Render Text Areas */}
+      {isSeparateNotes ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <textarea
+            placeholder="Add notes for the left view here..."
+            value={leftNotes}
+            onChange={(e) => setLeftNotes(e.target.value)}
+            className="w-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-strokedark rounded-md p-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            rows={4}
+          />
+          <textarea
+            placeholder="Add notes for the right view here..."
+            value={rightNotes}
+            onChange={(e) => setRightNotes(e.target.value)}
+            className="w-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-strokedark rounded-md p-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            rows={4}
+          />
+        </div>
+      ) : (
         <textarea
           placeholder="Add comparison notes here..."
           value={notes}
@@ -276,8 +338,8 @@ const ComparePage: React.FC = () => {
           className="w-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-strokedark rounded-md p-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
           rows={4}
         />
-      </div>
-
+      )}
+  
       {/* Publish Button */}
       <div className="flex justify-end mt-6">
         <button
@@ -287,7 +349,7 @@ const ComparePage: React.FC = () => {
           Publish Comparison
         </button>
       </div>
-
+  
       {/* Publish Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
@@ -314,11 +376,11 @@ const ComparePage: React.FC = () => {
                 <span className="text-gray-700 dark:text-gray-300">Include Notes</span>
               </label>
             </div>
-
+  
             {validationMessage && (
               <p className="text-red-600 text-sm mb-4">{validationMessage}</p>
             )}
-
+  
             <div className="flex justify-end space-x-3">
               <button
                 onClick={closePublishModal}
@@ -338,6 +400,7 @@ const ComparePage: React.FC = () => {
       )}
     </div>
   );
+  
 };
 
 export default ComparePage;

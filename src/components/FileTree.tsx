@@ -113,7 +113,7 @@ const fileTreeDataByRoom: Record<string, Record<string, MediaFiles>> = {
         <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
           <path d="M3 4a1 1 0 0 1 1-1h6.236a1 1 0 0 1 .707.293l1.414 1.414H20a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z" />
         </svg>
-        File Tree
+        A6_stern
       </h2>
 
       {fileTreeOpen.fileTree && (

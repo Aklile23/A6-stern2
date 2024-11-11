@@ -113,7 +113,7 @@ const RoomFileViewer: React.FC<RoomFileViewerProps> = ({ }) => {
               </div>
             ) : (
               !collapsedDates[date] && (
-                <p className="text-center text-bodydark dark:text-gray-400">No {activeTab} available for this date</p>
+                <p className="text-center text-bodydark dark:text-gray-400 mt-2">No {activeTab} available for this date</p>
               )
             )}
           </div>

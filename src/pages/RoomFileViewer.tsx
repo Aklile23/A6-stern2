@@ -88,6 +88,7 @@ const RoomFileViewer: React.FC<RoomFileViewerProps> = ({ }) => {
             >
               <h3 className="font-semibold text-lg text-gray-800 dark:text-gray-200 flex-grow">
                 {date}
+                <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">({files.length})</span>
               </h3>
               <svg
                 className={`transition-transform duration-200 transform ${collapsedDates[date] ? '' : 'rotate-90'}`}
@@ -108,7 +109,7 @@ const RoomFileViewer: React.FC<RoomFileViewerProps> = ({ }) => {
 
             {/* Collapsible Content */}
             {!collapsedDates[date] && files.length > 0 ? (
-              <div className="grid grid-cols-2 gap-4 mt-2">
+              <div className="grid grid-cols-2 gap-4 mt-2 ">
                 {renderThumbnails(files)}
               </div>
             ) : (
@@ -127,18 +128,17 @@ const RoomFileViewer: React.FC<RoomFileViewerProps> = ({ }) => {
       <Breadcrumb pageName={`A6_stern`} />
       <div className="w-full bg-white rounded-md shadow-default dark:bg-boxdark dark:text-white">
         <div className="p-4 border-b border-gray-300 dark:border-strokedark">
-        <h1 className="text-xl font-bold text-black dark:text-white">
+          <h1 className="text-xl font-bold text-black dark:text-white">
             {`${room.charAt(0).toUpperCase()}${room.slice(1).replace(/([a-zA-Z]+)(\d+)/, '$1 $2')} Files`}
-        </h1>
-
+          </h1>
+  
           <div className="text-sm text-gray-600 dark:text-gray-400 mt-2 flex space-x-1">
             <p>Images ({totalImageCount}),</p>
             <p>Videos ({totalVideoCount}),</p>
             <p>Pointcloud Data ({totalPointcloudCount})</p>
           </div>
-
         </div>
-
+  
         <div className="flex border-b border-gray-300 dark:border-strokedark">
           <button
             className={`flex-1 px-4 py-2 text-sm font-medium ${activeTab === 'images' ? 'border-b-2 border-primary text-primary dark:text-white' : 'text-bodydark1 dark:text-gray-300 hover:text-primary'}`}
@@ -159,11 +159,65 @@ const RoomFileViewer: React.FC<RoomFileViewerProps> = ({ }) => {
             Pointcloud Data
           </button>
         </div>
-
-        <div className="p-4">{renderContent()}</div>
+  
+        <div className="p-4 space-y-4 mt-4">
+          {Object.keys(roomData).map((date) => {
+            const files = roomData[date][activeTab] || [];
+            return (
+              <div key={date}>
+                {/* Collapsible Header */}
+                <div
+                  onClick={() => toggleCollapse(date)}
+                  className="flex items-center cursor-pointer bg-gray-100 dark:bg-gray-800 px-4 py-3 rounded-md shadow hover:shadow-lg transition duration-200 ease-in-out"
+                >
+                  <h3 className="font-semibold text-lg text-gray-800 dark:text-gray-200 flex-grow">
+                    {date}
+                    <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">({files.length})</span>
+                  </h3>
+                  <svg
+                    className={`transition-transform duration-200 transform ${collapsedDates[date] ? '' : 'rotate-90'}`}
+                    width="16"
+                    height="16"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      clipRule="evenodd"
+                      d="M4.41107 6.9107C4.73651 6.58527 5.26414 6.58527 5.58958 6.9107L10.0003 11.3214L14.4111 6.91071C14.7365 6.58527 15.2641 6.58527 15.5896 6.91071C15.915 7.23614 15.915 7.76378 15.5896 8.08922L10.5896 13.0892C10.2641 13.4147 9.73651 13.4147 9.41107 13.0892L4.41107 8.08922C4.08563 7.76378 4.08563 7.23614 4.41107 6.9107Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </div>
+  
+                {/* Animated Collapsible Content */}
+                <div
+                  style={{
+                    maxHeight: collapsedDates[date] ? '0px' : '500px',
+                    opacity: collapsedDates[date] ? 0 : 1,
+                    overflow: 'hidden',
+                    transition: 'max-height 0.3s ease, opacity 0.3s ease',
+                  }}
+                >
+                  {files.length > 0 ? (
+                    <div className="grid grid-cols-2 gap-4 mt-2">
+                      {renderThumbnails(files)}
+                    </div>
+                  ) : (
+                    <p className="text-center text-bodydark dark:text-gray-400 mt-2">
+                      No {activeTab} available for this date
+                    </p>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </>
   );
+  
 };
 
 export default RoomFileViewer;

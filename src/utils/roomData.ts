@@ -1,5 +1,5 @@
 // roomData.ts
-//room specific data sorted by date 
+//room specific data sorted by date for RoomExplorer
 
 export const dataByRoomAndDate: { 
     [room: string]: {

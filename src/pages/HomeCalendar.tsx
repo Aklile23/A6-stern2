@@ -121,7 +121,7 @@ const HomeCalendar: React.FC = () => {
                   .map((day, index) => (
                     <td
                       key={index}
-                      className={`relative h-12 cursor-pointer border p-1 text-center transition duration-500 border-strokedark hover:bg-meta-4 ${
+                      className={`relative h-16 cursor-pointer border p-1 text-center transition duration-500 border-strokedark hover:bg-meta-4 ${
                         day 
                           ? dataByDate[`${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`]
                             ? 'bg-primary font-medium text-white'  // Highlight dates with data

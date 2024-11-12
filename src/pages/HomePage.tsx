@@ -36,7 +36,7 @@ const HomePage: React.FC = () => {
   const handleRoomClick = (e: React.MouseEvent<HTMLDivElement>, room: string) => {
     e.stopPropagation();
     setPinnedCalendarPosition({ top: e.clientY, left: e.clientX });
-    navigate('/projecty', { state: { room } }); // Pass the room as state
+    navigate('/RoomExplorer', { state: { room } }); // Pass the room as state
   };
   
 

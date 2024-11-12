@@ -109,7 +109,7 @@ const StaticViewerRoom: React.FC = () => {
             Open in 360 Viewer
           </button>
           <button
-            onClick={() => navigate('/projecty', { state: { room } })}
+            onClick={() => navigate('/RoomExplorer', { state: { room } })}
             className="bg-primary text-white font-semibold py-2 px-3 rounded-lg shadow-lg transition-transform duration-300 hover:scale-105 flex items-center justify-center"
           >
             <svg fill="#ffffff" height="24px" width="24px" viewBox="0 0 288.312 288.312" xmlns="http://www.w3.org/2000/svg">

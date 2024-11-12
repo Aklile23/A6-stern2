@@ -63,7 +63,7 @@ function App() {
               element={
                 <>
                   <PageTitle title="Project Y | Projects Dashboard" />
-                  <RoomFileViewer room={''} />
+                  <Projecty />
                 </>
               }
             />
@@ -73,6 +73,7 @@ function App() {
             <Route path="/staticViewerRoom" element={<StaticViewerRoom />} />
             <Route path="/Compare" element={<ComparePage />} />
             <Route path="/PCDViewer" element={<Aframe_IntViewer />} />
+            <Route path="/RoomExplorer" element={<RoomFileViewer room={''} />} />
             
           </Routes>
         </DefaultLayout>

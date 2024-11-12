@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getHDImagePath } from '../utils/pathutils';
 import { FaCalendarAlt, FaDoorOpen } from 'react-icons/fa';
+import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
 
 // Define a type for the file structure
 type MediaFiles = {
@@ -91,21 +92,28 @@ const fileTreeDataByRoom: Record<string, Record<string, MediaFiles>> = {
   // Continue similarly for other rooms
 };
 
-  const FileTree: React.FC = () => {
-    const [fileTreeOpen, setFileTreeOpen] = useState<{ [key: string]: boolean }>({});
-    const navigate = useNavigate();
+const FileTree: React.FC = () => {
+  const [fileTreeOpen, setFileTreeOpen] = useState<{ [key: string]: boolean }>({});
+  const navigate = useNavigate();
   
-    const toggleNode = (key: string) => {
-      setFileTreeOpen((prev) => ({
-        ...prev,
-        [key]: !prev[key],
-      }));
-    };
+  const toggleNode = (key: string) => {
+    setFileTreeOpen((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
 
+  const handleRoomClick = (e: React.MouseEvent<HTMLSpanElement>, room: string) => {
+    e.stopPropagation();
+    const formattedRoom = room.toLowerCase().replace(/\s+/g, ''); // Format to "room1", "room2"
+    navigate('/RoomExplorer', { state: { room: formattedRoom } });
+  };
+    
   return (
-    <div className="text-[#f5f5f7] rounded-lg w-full overflow-y-auto max-h-[550px] scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800"
-         style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1F2937' }}>
+    <div className="text-[#f5f5f7] rounded-lg w-full overflow-y-auto max-h-[600px] scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800"
+          style={{ scrollbarWidth: 'thin', scrollbarColor: '#4B5563 #1F2937' }}>
       
+      {/* Main Title */}
       <h2
         onClick={() => setFileTreeOpen((prev) => ({ ...prev, fileTree: !prev.fileTree }))}
         className="flex items-center font-bold text-lg cursor-pointer px-4 py-2 transition-colors duration-200 hover:text-primary"
@@ -115,17 +123,18 @@ const fileTreeDataByRoom: Record<string, Record<string, MediaFiles>> = {
         </svg>
         A6_stern
       </h2>
-
+  
       {fileTreeOpen.fileTree && (
         <div className="ml-4">
-
+  
           {/* Date Based Section */}
-          <h3
+          {/* <h3
             onClick={() => toggleNode('dateBased')}
             className="flex items-center font-semibold text-md cursor-pointer px-4 py-2 transition-colors duration-200 hover:text-primary"
           >
             <FaCalendarAlt className="mr-2" /> Date Based
           </h3>
+  
           {fileTreeOpen.dateBased && (
             <div className="ml-4">
               {Object.keys(fileTreeData).map((date) => (
@@ -146,7 +155,7 @@ const fileTreeDataByRoom: Record<string, Record<string, MediaFiles>> = {
                     </svg>
                     <span className="font-medium">{date}</span>
                   </div>
-
+  
                   {fileTreeOpen[date] && (
                     <div className="ml-4 mt-2 border-l border-gray-600 pl-4">
                       {Object.entries(fileTreeData[date]!).map(([type, files]) => (
@@ -158,7 +167,7 @@ const fileTreeDataByRoom: Record<string, Record<string, MediaFiles>> = {
                               const filePath = type === "pointclouds"
                                 ? `/PCD/${formattedDate}/${file}`
                                 : `/Images/thumbnails/${formattedDate}/${file}`;
-
+  
                               return (
                                 <li key={index} className="flex items-center text-sm text-gray-300 hover:text-primary transition-colors duration-150">
                                   {type === "images" ? (
@@ -197,56 +206,53 @@ const fileTreeDataByRoom: Record<string, Record<string, MediaFiles>> = {
                 </div>
               ))}
             </div>
-          )}
-
-{/* Room Based Section */}
-<h3
-        onClick={() => toggleNode('roomBased')}
-        className="flex items-center font-semibold text-md cursor-pointer px-4 py-2 transition-colors duration-200 hover:text-primary"
-      >
-        <FaDoorOpen className="mr-2" /> Room Based
-      </h3>
-
-      {fileTreeOpen.roomBased && (
-        <div className="ml-4">
+          )} */}
+          
+          {/* Room Section without additional "Room Based" header */}
           {Object.keys(fileTreeDataByRoom).map((room) => (
-            <div key={room} className="mb-2">
-              {/* Room Level */}
-              <div
-                onClick={() => toggleNode(room)}
-                className="flex items-center cursor-pointer text-sm text-white hover:text-primary transition-colors duration-200 pl-4"
-              >
+            <div key={room} className="mb-2"> 
+              {/* Room Level with Chevron Icon */}
+              <div className="flex items-center text-sm text-white hover:text-primary transition-colors duration-200 pl-4">
+                {/* Chevron Icon for Expand/Collapse */}
+                <span onClick={() => toggleNode(room)} className="mr-2 cursor-pointer">
+                  {fileTreeOpen[room] ? <FaChevronDown /> : <FaChevronRight />}
+                </span>
+                {/* Folder Icon and Room Name */}
                 <svg
-                  className={`transform transition-transform duration-200 mr-2 ${fileTreeOpen[room] ? 'rotate-90' : 'rotate-0'}`}
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
+                  className="w-4 h-4 mr-2"
                   fill="currentColor"
+                  viewBox="0 0 24 24"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path d="M3 4a1 1 0 0 1 1-1h6.236a1 1 0 0 1 .707.293l1.414 1.414H20a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z"/>
+                  <path d="M3 4a1 1 0 0 1 1-1h6.236a1 1 0 0 1 .707.293l1.414 1.414H20a1 1 0 0 1-1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z" />
                 </svg>
-                <span className="font-medium">{room}</span>
+                <span
+                  className="font-medium cursor-pointer"
+                  onClick={(e) => handleRoomClick(e, room)} // Pass event and room to handleRoomClick
+                >
+                  {room}
+                </span>
+
               </div>
 
               {fileTreeOpen[room] && (
                 <div className="ml-4 mt-2 border-l border-gray-600 pl-4">
                   {Object.keys(fileTreeDataByRoom[room]!).map((date) => (
                     <div key={date} className="mb-2">
-                      {/* Date Level */}
-                      <div
-                        onClick={() => toggleNode(`${room}-${date}`)}
-                        className="flex items-center cursor-pointer text-sm text-gray-300 hover:text-primary transition-colors duration-200 pl-4"
-                      >
+                      {/* Date Level with Chevron Icon */}
+                      <div className="flex items-center text-sm text-gray-300 hover:text-primary transition-colors duration-200 pl-4">
+                        {/* Chevron Icon for Expand/Collapse */}
+                        <span onClick={() => toggleNode(`${room}-${date}`)} className="mr-2 cursor-pointer">
+                          {fileTreeOpen[`${room}-${date}`] ? <FaChevronDown /> : <FaChevronRight />}
+                        </span>
+                        {/* Folder Icon and Date */}
                         <svg
-                          className={`transform transition-transform duration-200 mr-2 ${fileTreeOpen[`${room}-${date}`] ? 'rotate-90' : 'rotate-0'}`}
-                          width="18"
-                          height="18"
-                          viewBox="0 0 24 24"
+                          className="w-4 h-4 mr-2"
                           fill="currentColor"
+                          viewBox="0 0 24 24"
                           xmlns="http://www.w3.org/2000/svg"
                         >
-                          <path d="M3 4a1 1 0 0 1 1-1h6.236a1 1 0 0 1 .707.293l1.414 1.414H20a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z"/>
+                          <path d="M3 4a1 1 0 0 1 1-1h6.236a1 1 0 0 1 .707.293l1.414 1.414H20a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z" />
                         </svg>
                         <span className="font-medium">{date}</span>
                       </div>
@@ -255,22 +261,23 @@ const fileTreeDataByRoom: Record<string, Record<string, MediaFiles>> = {
                         <div className="ml-4 mt-2 border-l border-gray-600 pl-4">
                           {Object.entries(fileTreeDataByRoom[room]![date]!).map(([type, files]) => (
                             <div key={type} className="mt-3">
-                              {/* File Type Level */}
+                              {/* File Type Level with Chevron Icon */}
                               <div
-                                onClick={() =>
-                                  toggleNode(`${room}-${date}-${type}`)
-                                }
+                                onClick={() => toggleNode(`${room}-${date}-${type}`)}
                                 className="flex items-center cursor-pointer text-xs text-gray-400 uppercase font-semibold mb-1 tracking-wide hover:text-primary transition duration-200"
                               >
+                                {/* Chevron Icon for Expand/Collapse */}
+                                <span className="mr-2 cursor-pointer">
+                                  {fileTreeOpen[`${room}-${date}-${type}`] ? <FaChevronDown /> : <FaChevronRight />}
+                                </span>
+                                {/* Folder Icon and File Type Label */}
                                 <svg
-                                  className={`transform transition-transform duration-200 mr-2 ${fileTreeOpen[`${room}-${date}-${type}`] ? 'rotate-90' : 'rotate-0'}`}
-                                  width="18"
-                                  height="18"
-                                  viewBox="0 0 24 24"
+                                  className="w-4 h-4 mr-2"
                                   fill="currentColor"
+                                  viewBox="0 0 24 24"
                                   xmlns="http://www.w3.org/2000/svg"
                                 >
-                                  <path d="M3 4a1 1 0 0 1 1-1h6.236a1 1 0 0 1 .707.293l1.414 1.414H20a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z"/>
+                                  <path d="M3 4a1 1 0 0 1 1-1h6.236a1 1 0 0 1 .707.293l1.414 1.414H20a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z" />
                                 </svg>
                                 <span>{type.charAt(0).toUpperCase() + type.slice(1)}</span>
                               </div>
@@ -325,12 +332,12 @@ const fileTreeDataByRoom: Record<string, Record<string, MediaFiles>> = {
               )}
             </div>
           ))}
-        </div>
-      )}
+
         </div>
       )}
     </div>
   );
+    
 };
 
 export default FileTree;

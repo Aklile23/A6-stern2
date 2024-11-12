@@ -6,7 +6,8 @@ import { TextureLoader, BackSide, WebGLRenderer, Scene, Camera } from 'three';
 interface Compare360ViewerProps {
   imageUrl: string;
   onClose: () => void;
-  onScreenshotsUpdate?: (screenshots: string[]) => void; // Add this line
+  onScreenshotsUpdate?: (screenshots: string[]) => void; 
+  onImageDetailsUpdate?: (fileName: string, formattedDate: string) => void;
 }
 
 const PanoramicSphere: React.FC<{ imageUrl: string }> = ({ imageUrl }) => {
@@ -36,7 +37,7 @@ const ScreenshotHelper: React.FC<{ setRefs: (gl: WebGLRenderer, scene: Scene, ca
   return null;
 };
 
-const Compare360Viewer: React.FC<Compare360ViewerProps> = ({ imageUrl, onClose, onScreenshotsUpdate }) => {
+const Compare360Viewer: React.FC<Compare360ViewerProps> = ({ imageUrl, onClose, onScreenshotsUpdate,  onImageDetailsUpdate}) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const viewerRef = useRef<HTMLDivElement>(null);
   const [isToolbarOpen, setIsToolbarOpen] = useState(false);
@@ -45,10 +46,17 @@ const Compare360Viewer: React.FC<Compare360ViewerProps> = ({ imageUrl, onClose, 
   const [camera, setCamera] = useState<Camera | null>(null);
   const [capturedScreenshots, setCapturedScreenshots] = useState<string[]>([]);
 
-  const fileName = imageUrl.split('/').pop();
+  const fileName = imageUrl.split('/').pop() || "unknown";
   const folderName = imageUrl.split('/')[3];
-  const formattedDate = `${folderName.slice(0, 4)}-${folderName.slice(4, 6)}-${folderName.slice(6, 8)}`;
+  const formattedDate = folderName ? `${folderName.slice(0, 4)}-${folderName.slice(4, 6)}-${folderName.slice(6, 8)}` : "";
 
+  // UseEffect to send data, ensuring fileName and formattedDate are valid strings
+  useEffect(() => {
+    if (onImageDetailsUpdate) {
+      onImageDetailsUpdate(fileName, formattedDate); // Now fileName and formattedDate are always strings
+    }
+  }, [fileName, formattedDate, onImageDetailsUpdate]);
+  
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
       viewerRef.current?.requestFullscreen();

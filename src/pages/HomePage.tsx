@@ -69,14 +69,14 @@ const HomePage: React.FC = () => {
 
       <div className="relative flex flex-col lg:flex-row items-start justify-between min-h-screen bg-slate-100 dark:bg-black text-white p-8 overflow-hidden">
         
-        <div className="lg:w-2/3 pr-8 mt-26 ml-13">
+        <div className="lg:w-2/3 pr-8 mt-20 ml-13">
           <div className="absolute inset-0 bg-gradient-radial from-transparent via-[#525f7f] to-black opacity-40 blur-3xl" style={{ zIndex: 0 }}></div>
 
           <h1 className="ml-3 text-5xl font-extrabold dark:text-primary text-black mb-7">
             Interactive Floorplan
           </h1>
-          <p className="ml-3 text-xl text-gray-600 dark:text-gray-400 mb-7 text-left max-w-3xl">
-            Hover over a room to view a calendar and see available data by date. Click on a date to access detailed content, including images, videos, and point cloud data for that room.
+          <p className="ml-3 text-xl text-gray-600 dark:text-gray-400 mb-7 text-left max-w-5xl">
+          Hover over a room to display associated data dynamically in the data overview. Click on a room to navigate to a detailed explorer page for that room. Use the calendar to view specific data by date, or toggle between the data overview and the calendar.
           </p>
 
           <div className="relative z-10">

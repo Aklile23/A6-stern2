@@ -287,10 +287,10 @@ const ComparePage: React.FC = () => {
   
     // Section: Reference Images Table
     currentY += 10;
-  
+
     doc.setFont("helvetica", "bold");
     doc.setFontSize(14);
-    doc.text("Reference Images", 105, currentY, { align: 'center' });
+    doc.text("", 105, currentY, { align: 'center' });
     currentY += 1;
   
     const leftColumnX = 20;
@@ -305,16 +305,16 @@ const ComparePage: React.FC = () => {
         rowY = 20;
         doc.setFont("helvetica", "bold");
         doc.setFontSize(14);
-        doc.text("Reference Images (Continued)", 105, rowY, { align: 'center' });
+        doc.text("Reference Images", 105, rowY, { align: 'center' });
         rowY += 10;
       }
   
       if (leftViewerScreenshots[i]) {
-        doc.addImage(leftViewerScreenshots[i], 'PNG', leftColumnX, rowY, 80, 45);
+        doc.addImage(leftViewerScreenshots[i], 'PNG', leftColumnX, rowY, 80, 80);
       }
   
       if (rightViewerScreenshots[i]) {
-        doc.addImage(rightViewerScreenshots[i], 'PNG', rightColumnX, rowY, 80, 45);
+        doc.addImage(rightViewerScreenshots[i], 'PNG', rightColumnX, rowY, 80, 80);
       }
   
       rowY += 50;
@@ -463,8 +463,8 @@ const ComparePage: React.FC = () => {
             </div>
 
             {/* Right View Flag Checkboxes */}
-            <div className="flex items-center space-x-4">
-              <label className="text-gray-700 dark:text-gray-300 font-semibold ml-15">Right View Flags:</label>
+            <div className="flex items-center space-x-4 ">
+              <label className="text-gray-700 dark:text-gray-300 font-semibold ml-56">Right View Flags:</label>
               <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
@@ -583,7 +583,7 @@ const ComparePage: React.FC = () => {
                   onChange={() => setIncludeImages(!includeImages)}
                   className="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
                 />
-                <span className="text-gray-700 dark:text-gray-300">Include Images</span>
+                <span className="text-gray-700 dark:text-gray-300">Include Screenshots</span>
               </label>
               <label className="flex items-center space-x-2 mt-2">
                 <input

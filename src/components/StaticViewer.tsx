@@ -141,9 +141,6 @@ const StaticViewer: React.FC = () => {
     doc.save('2DViewer_Report.pdf');
   };
   
-  
-  
-
   const handleModalPublish = () => {
     if (!includeAutoLabeling && !includeAdditionalComments) {
       setValidationMessage('Please select at least one option to include in the report.');

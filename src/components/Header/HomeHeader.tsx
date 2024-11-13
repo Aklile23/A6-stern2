@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 // import DropdownMessage from './DropdownMessage';
 // import DropdownNotification from './DropdownNotification';
 // import DropdownUser from './DropdownUser';
-import LogoIcon from '../../images/logo/logo-icon.svg';
+// import LogoIcon from '../../images/logo/logo-icon.svg';
 import DarkModeSwitcher from './DarkModeSwitcher';
 
 const HomeHeader = (props: {
@@ -23,8 +23,20 @@ const HomeHeader = (props: {
         </div>
 
         <div className="hidden sm:block">
-          <h1 className='text-2xl dark:text-white text-black'><b>SMART</b></h1>
+          {/* Light mode image */}
+          <img 
+            className="w-1/12 dark:hidden" 
+            src="Logo/LogoforWhite.png" 
+            alt="Logo for light mode" 
+          />
+          {/* Dark mode image */}
+          <img 
+            className="w-1/12 hidden dark:block" 
+            src="Logo/LogoforDark.png" 
+            alt="Logo for dark mode" 
+          />
         </div>
+
 
         <div className="flex items-center gap-3 2xsm:gap-7">
           <ul className="flex items-center gap-2 2xsm:gap-4">

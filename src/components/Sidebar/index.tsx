@@ -56,7 +56,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
       {/* Toggle Button */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="p-2 m-4 bg-primary rounded-lg text-white self-end mr-3"
+        className="p-2 m-4 mt-5 bg-primary rounded-lg text-white self-end mr-3"
       >
         {sidebarOpen ? (
           <svg
@@ -82,6 +82,19 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, setSidebarOpen }) => {
           </svg>
         )}
       </button>
+
+      {/* Logo Section */}
+      <div className="hidden sm:block ml-4">
+        {/* Light mode image */}
+        {sidebarOpen && (
+        <img 
+          className="w-30 -mt-14 ml-1 " 
+          src="Logo/LogoforDark.png" 
+          alt="Logo for light mode" 
+        />
+        )}
+      </div>
+
 
       {/* Sidebar Content */}
       <div className="flex-grow overflow-y-auto mt-4">

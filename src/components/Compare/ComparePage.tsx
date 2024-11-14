@@ -267,19 +267,38 @@ const ComparePage: React.FC = () => {
     doc.setFontSize(11);
   
     let flagsText = "";
-    if (isSeparateNotes) {
-      if (leftDelayed) flagsText += "Left View is marked as delayed. ";
-      if (leftQualityIssue) flagsText += "Left View has a Quality Issue. ";
-      if (leftSafetyIssue) flagsText += "Left View has a Safety Issue. ";
-      if (rightDelayed) flagsText += "Right View is marked as delayed. ";
-      if (rightQualityIssue) flagsText += "Right View has a Quality Issue. ";
-      if (rightSafetyIssue) flagsText += "Right View has a Safety Issue. ";
-    } else {
-      if (delayed) flagsText += "The project is marked as delayed. ";
-      if (qualityIssue) flagsText += "Quality Issue observed. ";
-      if (safetyIssue) flagsText += "Safety Issue observed. ";
-      if (!delayed && !qualityIssue && !safetyIssue) flagsText = "No issues marked.";
-    }
+
+if (isSeparateNotes) {
+  if (leftDelayed || leftQualityIssue || leftSafetyIssue) {
+    flagsText += "Left View is marked";
+    const leftIssues = [];
+    if (leftDelayed) leftIssues.push("as delayed");
+    if (leftQualityIssue) leftIssues.push("for having a Quality Issue");
+    if (leftSafetyIssue) leftIssues.push("for having a Safety Issue");
+    flagsText += ` ${leftIssues.join(" and ")}. `;
+  }
+
+  if (rightDelayed || rightQualityIssue || rightSafetyIssue) {
+    flagsText += "Right View is marked";
+    const rightIssues = [];
+    if (rightDelayed) rightIssues.push("as delayed");
+    if (rightQualityIssue) rightIssues.push("for having a Quality Issue");
+    if (rightSafetyIssue) rightIssues.push("for having a Safety Issue");
+    flagsText += ` ${rightIssues.join(" and ")}. `;
+  }
+} else {
+  if (delayed || qualityIssue || safetyIssue) {
+    flagsText += "The project is marked as";
+    const projectIssues = [];
+    if (delayed) projectIssues.push("delayed");
+    if (qualityIssue) projectIssues.push("for having a Quality Issue");
+    if (safetyIssue) projectIssues.push("for having a Safety Issue");
+    flagsText += ` ${projectIssues.join(" and ")}. `;
+  } else {
+    flagsText = "No issues marked.";
+  }
+}
+
   
     const flagsTextLines = doc.splitTextToSize(flagsText, 180);
     doc.text(flagsTextLines, 10, currentY + 10);

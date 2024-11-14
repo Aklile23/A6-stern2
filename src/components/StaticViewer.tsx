@@ -24,10 +24,12 @@ const StaticViewer: React.FC = () => {
   const [delayed, setDelayed] = useState(false);
 
   const [displayedText, setDisplayedText] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false); 
   
   useEffect(() => {
     // Clear the text when the image changes
     setDisplayedText('');
+    setIsGenerating(false); // Reset generating state
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current); // Clear any ongoing typing timeout
       typingTimeoutRef.current = null; // Reset the timeout ref
@@ -76,6 +78,7 @@ const StaticViewer: React.FC = () => {
     const description = imageDescriptions[relativePath] || "No description available for this image.";
 
     setDisplayedText(''); // Clear previous text
+    setIsGenerating(true); 
     let index = 0;
 
     // Stop any ongoing typing animation
@@ -104,6 +107,8 @@ const StaticViewer: React.FC = () => {
           setDisplayedText(description.slice(0, index)); // Use slicing for typing effect
           index++;
           typingTimeoutRef.current = setTimeout(typeCharacter, 50); // Adjust typing speed
+        }else {
+          setIsGenerating(false);
         }
       };
       typeCharacter(); // Start typing
@@ -282,15 +287,23 @@ const StaticViewer: React.FC = () => {
           </label>
           <textarea
               rows={5}
-              placeholder="Typing description..."
-              className="w-full px-4 py-2 border rounded-md shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:outline-none focus:ring focus:ring-primary focus:border-primary"
+              placeholder="Automatic description..."
+              className={`w-full px-4 py-2 border rounded-md shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:outline-none focus:ring focus:ring-primary focus:border-primary${
+                displayedText.includes('Generating')
+                  ? 'italic text-gray-500' // Apply styles for 'Generating'
+                  : ''}`}
               value={displayedText}
               readOnly // Prevent edits during the animation
           />
           {/* Generate Button */}
           <button
             onClick={handleGenerateAutomaticLabeling}
-            className="mt-2 bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-transform duration-300 hover:bg-indigo-700"
+            disabled={isGenerating} // Disable button when generating
+            className={`mt-2 py-2 px-4 rounded-lg shadow-md transition-transform duration-300 ${
+              isGenerating
+                ? 'bg-gray-400 text-gray-600 cursor-not-allowed' // Disabled styles
+                : 'bg-indigo-600 text-white hover:bg-indigo-700' // Active styles
+            }`}
           >
             Generate
           </button>

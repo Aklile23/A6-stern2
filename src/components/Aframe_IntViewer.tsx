@@ -16,10 +16,29 @@ const Aframe_IntViewer: React.FC = () => {
   const folderName = modelUrl.split('/')[2] || ""; // Safely access the folder name
 
   // Format date only if folderName has enough characters
-  const formattedDate =
-    folderName.length === 8
-      ? `${folderName.slice(0, 4)}-${folderName.slice(4, 6)}-${folderName.slice(6, 8)}`
-      : "Unknown Date";
+
+  const extractDateFromPath = (path: string): string => {
+    const parts = path.split('/');
+    const dateSegment = parts.find(segment => /^\d{8}$/.test(segment));
+    if (!dateSegment) {
+      throw new Error("Date not found in the path");
+    }
+    return `${dateSegment.slice(0, 4)}-${dateSegment.slice(4, 6)}-${dateSegment.slice(6, 8)}`;
+  };
+  
+  let formattedDate: string;
+
+  try {
+    formattedDate = extractDateFromPath(modelUrl);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error extracting date:", error.message);
+    } else {
+      console.error("An unknown error occurred:", error);
+    }
+    formattedDate = "Unknown Date"; // Fallback if date extraction fails
+  }
+  
 
   const [notes, setNotes] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);

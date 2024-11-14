@@ -2,15 +2,13 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
+import imageDescriptions from '../utils/imageDescriptions';
+
 
 const StaticViewer: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const imageUrl = location.state?.imageUrl || "/Images/panoramas/20241007/room02.jpg";
-
-  const fileName = imageUrl.split('/').pop();
-  const folderName = imageUrl.split('/')[3];
-  const formattedDate = `${folderName.slice(0, 4)}-${folderName.slice(4, 6)}-${folderName.slice(6, 8)}`;
 
   // State for modal, checkboxes, and text fields
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,6 +22,67 @@ const StaticViewer: React.FC = () => {
   const [qualityIssue, setQualityIssue] = useState(false);
   const [delayed, setDelayed] = useState(false);
 
+  const [displayedText, setDisplayedText] = useState('');
+
+  const extractDateFromPath = (path: string): string => {
+    // Split the path into parts
+    const parts: string[] = path.split('/');
+  
+    // Look for a segment that matches the YYYYMMDD pattern
+    const dateSegment: string | undefined = parts.find((segment: string) => /^\d{8}$/.test(segment));
+  
+    if (!dateSegment) {
+      throw new Error("Date not found in the path");
+    }
+  
+    // Format the date as YYYY-MM-DD
+    return `${dateSegment.slice(0, 4)}-${dateSegment.slice(4, 6)}-${dateSegment.slice(6, 8)}`;
+  };
+  
+
+  const fileName = imageUrl.split('/').pop();
+  let formattedDate: string;
+
+  try {
+    formattedDate = extractDateFromPath(imageUrl);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error extracting date:", error.message);
+    } else {
+      console.error("An unknown error occurred:", error);
+    }
+    formattedDate = "Unknown Date"; // Fallback if date extraction fails
+  }
+
+  const simulateTyping = (fullText: string) => {
+    if (!fullText) {
+        setDisplayedText("No description available for this image.");
+        return;
+    }
+
+    setDisplayedText(''); // Clear previous text
+    let currentIndex = 0;
+
+    const interval = setInterval(() => {
+        if (currentIndex < fullText.length) {
+            setDisplayedText((prev) => prev + fullText[currentIndex]);
+            currentIndex++;
+        } else {
+            clearInterval(interval); // Stop when typing is complete
+        }
+    }, 50); // Adjust typing speed as needed
+  };
+
+  const handleGenerateAutomaticLabeling = () => {
+    const relativePath = imageUrl.split('Images/')[1]; // Extract path after "Images/"
+    const description = imageDescriptions[relativePath] || "No description available for this image.";
+    
+    if (description) {
+        simulateTyping(description);
+    } else {
+        setDisplayedText(description); // Directly set if there's no description
+    }
+  };
 
   const openPublishModal = () => setIsModalOpen(true);
   const closePublishModal = () => {
@@ -150,19 +209,16 @@ const StaticViewer: React.FC = () => {
     }
   };
 
-  const handleGenerateAutomaticLabeling = () => {
-    setAutoLabelingText("Generated labeling text goes here..."); // Replace with actual logic as needed
-  };
-
   return (
     <div className="w-full max-w-screen-3xl bg-white rounded-md shadow-default dark:bg-boxdark dark:text-white p-4 mx-auto mt-6">
       <div className="flex justify-between items-center border-b border-gray-300 dark:border-strokedark pb-4">
         <div>
           <h1 className="text-xl font-bold text-black dark:text-white">Static Viewer</h1>
           <p className="text-sm text-black dark:text-gray-400 mt-1">
-            Viewing: <span className="font-semibold">{fileName}</span>
-            <span className="text-gray-400"> (Date: {formattedDate})</span>
-          </p>
+  Viewing: <span className="font-semibold">{fileName}</span>
+  <span className="text-gray-400"> (Date: {formattedDate})</span>
+</p>
+
         </div>
 
         <div className="flex space-x-4">
@@ -197,12 +253,13 @@ const StaticViewer: React.FC = () => {
             Automatic Labeling
           </label>
           <textarea
-            rows={5}
-            placeholder="Enter comments"
-            className="w-full px-4 py-2 border rounded-md shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:outline-none focus:ring focus:ring-primary focus:border-primary"
-            value={autoLabelingText}
-            onChange={(e) => setAutoLabelingText(e.target.value)}
+              rows={5}
+              placeholder="Enter comments"
+              className="w-full px-4 py-2 border rounded-md shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:outline-none focus:ring focus:ring-primary focus:border-primary"
+              value={displayedText} // Use displayedText for the typing effect
+              readOnly // Make it read-only to prevent edits during typing
           />
+
           {/* Generate Button */}
           <button
             onClick={handleGenerateAutomaticLabeling}

@@ -43,7 +43,7 @@ const HomeHeader = (props: {
             <button
               className="mr-5 inline-flex items-center justify-center rounded-md bg-primary py-3 px-10 text-center font-medium text-white hover:scale-105 lg:px-8 xl:px-10"
             >
-              Signup
+              Login
             </button>
 
             {/* <!-- Dark Mode Toggler --> */}

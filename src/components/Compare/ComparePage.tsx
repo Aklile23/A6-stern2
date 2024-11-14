@@ -268,35 +268,35 @@ const ComparePage: React.FC = () => {
   
     let flagsText = "";
 
-if (isSeparateNotes) {
-  if (leftDelayed || leftQualityIssue || leftSafetyIssue) {
-    flagsText += "Left View is marked";
-    const leftIssues = [];
-    if (leftDelayed) leftIssues.push("as delayed");
-    if (leftQualityIssue) leftIssues.push("for having a Quality Issue");
-    if (leftSafetyIssue) leftIssues.push("for having a Safety Issue");
-    flagsText += ` ${leftIssues.join(" and ")}. `;
-  }
+  if (isSeparateNotes) {
+    if (leftDelayed || leftQualityIssue || leftSafetyIssue) {
+      flagsText += "Left View is marked";
+      const leftIssues = [];
+      if (leftDelayed) leftIssues.push("as delayed");
+      if (leftQualityIssue) leftIssues.push("for having a Quality Issue");
+      if (leftSafetyIssue) leftIssues.push("for having a Safety Issue");
+      flagsText += ` ${leftIssues.join(" and ")}. `;
+    }
 
-  if (rightDelayed || rightQualityIssue || rightSafetyIssue) {
-    flagsText += "Right View is marked";
-    const rightIssues = [];
-    if (rightDelayed) rightIssues.push("as delayed");
-    if (rightQualityIssue) rightIssues.push("for having a Quality Issue");
-    if (rightSafetyIssue) rightIssues.push("for having a Safety Issue");
-    flagsText += ` ${rightIssues.join(" and ")}. `;
-  }
-} else {
-  if (delayed || qualityIssue || safetyIssue) {
-    flagsText += "The project is marked as";
-    const projectIssues = [];
-    if (delayed) projectIssues.push("delayed");
-    if (qualityIssue) projectIssues.push("for having a Quality Issue");
-    if (safetyIssue) projectIssues.push("for having a Safety Issue");
-    flagsText += ` ${projectIssues.join(" and ")}. `;
+    if (rightDelayed || rightQualityIssue || rightSafetyIssue) {
+      flagsText += "Right View is marked";
+      const rightIssues = [];
+      if (rightDelayed) rightIssues.push("as delayed");
+      if (rightQualityIssue) rightIssues.push("for having a Quality Issue");
+      if (rightSafetyIssue) rightIssues.push("for having a Safety Issue");
+      flagsText += ` ${rightIssues.join(" and ")}. `;
+    }
   } else {
-    flagsText = "No issues marked.";
-  }
+    if (delayed || qualityIssue || safetyIssue) {
+      flagsText += "The project is marked as";
+      const projectIssues = [];
+      if (delayed) projectIssues.push("delayed");
+      if (qualityIssue) projectIssues.push("for having a Quality Issue");
+      if (safetyIssue) projectIssues.push("for having a Safety Issue");
+      flagsText += ` ${projectIssues.join(" and ")}. `;
+    } else {
+      flagsText = "No issues marked.";
+    }
 }
 
   

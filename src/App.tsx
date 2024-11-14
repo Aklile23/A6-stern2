@@ -29,6 +29,21 @@ function App() {
     setTimeout(() => setLoading(false), 1000);
   }, []);
 
+  const getTitleForPath = (path: string) => {
+    switch (path) {
+      case "/A6_Stern":
+        return "Projects | A6_stern";
+      case "/projectx":
+        return "Projects | Project X";
+      case "/projecty":
+        return "Projects | Project Y";
+      default:
+        return "Projects | A6_stern";
+    }
+  };
+
+  const currentTitle = getTitleForPath(pathname);
+
   return loading ? (
     <Loader />
   ) : (
@@ -38,13 +53,13 @@ function App() {
           <Route index element={<HomePage />} /> {/* Full-screen homepage */}
         </Routes>
       ) : (
-        <DefaultLayout>
+        <DefaultLayout title={currentTitle}>
           <Routes>
             <Route
               path="/A6_Stern"
               element={
                 <>
-                  <PageTitle title="A6_stern | Projects Dashboard" />
+                  <PageTitle title="A6_stern | Projects " />
                   <FileExplorer />
                 </>
               }
@@ -52,17 +67,14 @@ function App() {
             <Route
               path="/projectx"
               element={
-                <>
-                  <PageTitle title="Project X | Projects Dashboard" />
                   <Projectx />
-                </>
               }
             />
             <Route
               path="/projecty"
               element={
                 <>
-                  <PageTitle title="Project Y | Projects Dashboard" />
+                  <PageTitle title="Project Y | Projects " />
                   <Projecty />
                 </>
               }

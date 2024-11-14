@@ -1,5 +1,5 @@
 // StaticViewer.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import imageDescriptions from '../utils/imageDescriptions';
@@ -9,6 +9,7 @@ const StaticViewer: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const imageUrl = location.state?.imageUrl || "/Images/panoramas/20241007/room02.jpg";
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // State for modal, checkboxes, and text fields
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,6 +24,22 @@ const StaticViewer: React.FC = () => {
   const [delayed, setDelayed] = useState(false);
 
   const [displayedText, setDisplayedText] = useState('');
+  
+  useEffect(() => {
+    // Clear the text when the image changes
+    setDisplayedText('');
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current); // Clear any ongoing typing timeout
+      typingTimeoutRef.current = null; // Reset the timeout ref
+    }
+  }, [imageUrl]);
+
+  useEffect(() => {
+    return () => {
+        setDisplayedText(''); // Clear text on unmount
+    };
+  }, []);
+
 
   const extractDateFromPath = (path: string): string => {
     // Split the path into parts
@@ -54,35 +71,47 @@ const StaticViewer: React.FC = () => {
     formattedDate = "Unknown Date"; // Fallback if date extraction fails
   }
 
-  const simulateTyping = (fullText: string) => {
-    if (!fullText) {
-        setDisplayedText("No description available for this image.");
-        return;
-    }
+  const handleGenerateAutomaticLabeling = () => {
+    const relativePath = imageUrl.split('Images/')[1];
+    const description = imageDescriptions[relativePath] || "No description available for this image.";
 
     setDisplayedText(''); // Clear previous text
-    let currentIndex = 0;
+    let index = 0;
 
-    const interval = setInterval(() => {
-        if (currentIndex < fullText.length) {
-            setDisplayedText((prev) => prev + fullText[currentIndex]);
-            currentIndex++;
-        } else {
-            clearInterval(interval); // Stop when typing is complete
-        }
-    }, 50); // Adjust typing speed as needed
-  };
-
-  const handleGenerateAutomaticLabeling = () => {
-    const relativePath = imageUrl.split('Images/')[1]; // Extract path after "Images/"
-    const description = imageDescriptions[relativePath] || "No description available for this image.";
-    
-    if (description) {
-        simulateTyping(description);
-    } else {
-        setDisplayedText(description); // Directly set if there's no description
+    // Stop any ongoing typing animation
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = null;
     }
+
+    // "Generating..." animation
+    const loadingPhases = ['Generating.', 'Generating..', 'Generating...','Generating.', 'Generating..', 'Generating...'];
+    let loadingIndex = 0;
+
+    const showLoading = () => {
+      if (loadingIndex < loadingPhases.length) {
+        setDisplayedText(loadingPhases[loadingIndex]);
+        loadingIndex++;
+        typingTimeoutRef.current = setTimeout(showLoading, 500); // Adjust delay between loading phases
+      } else {
+        startTyping(); // Start the typing animation after "Generating..." finishes
+      }
+    };
+
+    const startTyping = () => {
+      const typeCharacter = () => {
+        if (index <= description.length) {
+          setDisplayedText(description.slice(0, index)); // Use slicing for typing effect
+          index++;
+          typingTimeoutRef.current = setTimeout(typeCharacter, 50); // Adjust typing speed
+        }
+      };
+      typeCharacter(); // Start typing
+    };
+
+    showLoading(); // Start the loading animation
   };
+
 
   const openPublishModal = () => setIsModalOpen(true);
   const closePublishModal = () => {
@@ -215,10 +244,9 @@ const StaticViewer: React.FC = () => {
         <div>
           <h1 className="text-xl font-bold text-black dark:text-white">Static Viewer</h1>
           <p className="text-sm text-black dark:text-gray-400 mt-1">
-  Viewing: <span className="font-semibold">{fileName}</span>
-  <span className="text-gray-400"> (Date: {formattedDate})</span>
-</p>
-
+            Viewing: <span className="font-semibold">{fileName}</span>
+            <span className="text-gray-400"> (Date: {formattedDate})</span>
+          </p>
         </div>
 
         <div className="flex space-x-4">
@@ -254,12 +282,11 @@ const StaticViewer: React.FC = () => {
           </label>
           <textarea
               rows={5}
-              placeholder="Enter comments"
+              placeholder="Typing description..."
               className="w-full px-4 py-2 border rounded-md shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:outline-none focus:ring focus:ring-primary focus:border-primary"
-              value={displayedText} // Use displayedText for the typing effect
-              readOnly // Make it read-only to prevent edits during typing
+              value={displayedText}
+              readOnly // Prevent edits during the animation
           />
-
           {/* Generate Button */}
           <button
             onClick={handleGenerateAutomaticLabeling}

@@ -33,11 +33,11 @@ const fileTreeDataByRoom: Record<string, Record<string, MediaFiles>> = {
   "Room 2": {
     "2024-10-07": {
       images: ["room02.jpg",],
-      pointclouds: ["Room 2.glb"]
+      pointclouds: ["room02.glb"]
     },
     "2024-10-09": {
       images: ["room02.jpg"],
-      pointclouds: ["Room 2.glb"]
+      pointclouds: ["room02.glb"]
     },
     "2024-10-11": {
       images: ["room02.jpg"],
@@ -47,7 +47,7 @@ const fileTreeDataByRoom: Record<string, Record<string, MediaFiles>> = {
   "Room 3": {
     "2024-10-07": {
       images: ["room03.jpg",],
-      pointclouds: ["Room 3.glb"]
+      pointclouds: ["room03.glb"]
     },
     "2024-10-09": {
       images: ["room03.jpg"],

@@ -37,12 +37,12 @@ const thumbnailDataByDate: ThumbnailDataByDate = {
       "Room 2": {
         images: [{ src: "/Images/thumbnails/20241007/room02.jpg", type: "image" }, ],
         videos: [],
-        pointclouds: [{ src: "/PCD/20241007/Room 2.glb", type: "pointcloud" }]
+        pointclouds: [{ src: "/PCD/20241007/room02.glb", type: "pointcloud" }]
       },
       "Room 3": {
         images: [{ src: "/Images/thumbnails/20241007/room03.jpg", type: "image" }, ],
         videos: [],
-        pointclouds: [{ src: "/PCD/20241007/Room 3.glb", type: "pointcloud" }]
+        pointclouds: [{ src: "/PCD/20241007/room03.glb", type: "pointcloud" }]
       },
       "Room 4": {
         images: [],videos: [],pointclouds: []
@@ -63,7 +63,7 @@ const thumbnailDataByDate: ThumbnailDataByDate = {
       "Room 2": {
         images: [{ src: "/Images/thumbnails/20241009/room02.jpg", type: "image" },],
         videos: [],
-        pointclouds: [{ src: "/PCD/20241009/Room 2.glb", type: "pointcloud" }]
+        pointclouds: [{ src: "/PCD/20241009/room02.glb", type: "pointcloud" }]
       },
       "Room 3": {
         images: [{ src: "/Images/thumbnails/20241009/room03.jpg", type: "image" }],

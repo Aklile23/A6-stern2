@@ -39,6 +39,12 @@ const Aframe_IntViewer: React.FC = () => {
     formattedDate = "Unknown Date"; // Fallback if date extraction fails
   }
   
+  let roomNumber = "Unknown Room";
+  const roomMatch = fileName.match(/room(\d+)/i);
+  if (roomMatch) {
+    roomNumber = `Room ${parseInt(roomMatch[1], 10)}`; // Extracts room number and removes leading zero if any
+  }
+  
 
   const [notes, setNotes] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -132,7 +138,10 @@ const Aframe_IntViewer: React.FC = () => {
           <h1 className="text-xl font-bold text-black dark:text-white">Point Cloud Viewer</h1>
           <p className="text-sm text-black dark:text-gray-400 mt-1">
             Viewing: <span className="font-semibold">{fileName}</span>
-            <span className="text-gray-400"> (Date: {formattedDate})</span>
+            <div className="flex justify-center space-x-1 mt-1">
+              <p className="text-sm text-gray-500 dark:text-gray-400">{roomNumber},</p>
+              <span className="text-gray-400"> (Date: {formattedDate})</span>
+            </div>
           </p>
         </div>
         <div className="flex space-x-4">

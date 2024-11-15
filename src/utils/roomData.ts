@@ -27,7 +27,7 @@ export const dataByRoomAndDate: {
         '2024-10-07': { 
             images: [{ src: "/Images/thumbnails/20241007/room02.jpg", type: "image" },], 
             videos: [],
-            pointclouds: [{ src: "/PCD/20241007/Room 2.glb", type: "pointcloud" },] },
+            pointclouds: [{ src: "/PCD/20241007/room02.glb", type: "pointcloud" },] },
         '2024-10-09': { 
             images: [{ src: "/Images/thumbnails/20241009/room02.jpg", type: "image" },], 
             videos: [], 

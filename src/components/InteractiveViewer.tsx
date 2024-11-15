@@ -33,6 +33,15 @@ const ScreenshotHelper: React.FC<{ setRefs: (gl: WebGLRenderer, scene: Scene, ca
   return null;
 };
 
+const extractDateFromPath = (path: string): string => {
+  const parts: string[] = path.split('/');
+  const dateSegment: string | undefined = parts.find((segment: string) => /^\d{8}$/.test(segment));
+  if (!dateSegment) {
+    return "Unknown Date"; // Graceful fallback
+  }
+  return `${dateSegment.slice(0, 4)}-${dateSegment.slice(4, 6)}-${dateSegment.slice(6, 8)}`;
+};
+
 const InteractiveViewer: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -45,8 +54,6 @@ const InteractiveViewer: React.FC = () => {
   const [camera, setCamera] = useState<Camera | null>(null);
 
   const fileName = imageUrl.split('/').pop();
-  const folderName = imageUrl.split('/')[3];
-  const formattedDate = `${folderName.slice(0, 4)}-${folderName.slice(4, 6)}-${folderName.slice(6, 8)}`;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [includeNotes, setIncludeNotes] = useState(false);
@@ -59,7 +66,21 @@ const InteractiveViewer: React.FC = () => {
   const [safetyIssue, setSafetyIssue] = useState(false);
   const [qualityIssue, setQualityIssue] = useState(false);
   const [delayed, setDelayed] = useState(false);
+  
+  // Extract the date from the path using the new function
+  let formattedDate: string;
+  try {
+    formattedDate = extractDateFromPath(imageUrl);
+  } catch (error) {
+    console.error("Error extracting date:", error);
+    formattedDate = "Unknown Date"; // Fallback if date extraction fails
+  }
 
+  let roomNumber = "Unknown Room";
+  const roomMatch = fileName.match(/room(\d+)/i);
+  if (roomMatch) {
+    roomNumber = `Room ${parseInt(roomMatch[1], 10)}`; // Extracts room number and removes leading zero if any
+  }
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -204,10 +225,6 @@ const InteractiveViewer: React.FC = () => {
     setCapturedScreenshots([]);
     closePublishModal();
   };
-  
-  
-  
-  
 
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -225,7 +242,10 @@ const InteractiveViewer: React.FC = () => {
           <h1 className="text-xl font-bold text-black dark:text-white">360 Viewer</h1>
           <p className="text-sm text-black dark:text-gray-400 mt-1">
             Viewing: <span className="font-semibold">{fileName}</span> 
-            <span className="text-gray-400"> (Date: {formattedDate})</span>
+            <div className="flex justify-center space-x-1 mt-1">
+              <p className="text-sm text-gray-500 dark:text-gray-400">{roomNumber},</p>
+              <span className="text-gray-400"> (Date: {formattedDate})</span>
+            </div>
           </p>
         </div>
         <div className="flex space-x-4">

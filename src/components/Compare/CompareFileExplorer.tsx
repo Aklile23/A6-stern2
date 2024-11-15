@@ -5,11 +5,12 @@ import { FaCalendarAlt } from 'react-icons/fa'; // Import the calendar icon
 interface CompareFileExplorerProps {
   selectedDate: string; // Date passed in for this specific view
   onFileSelect: (fileUrl: string) => void; // Function to handle file selection for comparison
+  disabledFile: string | null;
   className?: string;
   onBackToCalendar: () => void; // Function to trigger going back to the calendar
 }
 
-const CompareFileExplorer: React.FC<CompareFileExplorerProps> = ({ selectedDate, onFileSelect, className, onBackToCalendar }) => {
+const CompareFileExplorer: React.FC<CompareFileExplorerProps> = ({ selectedDate, onFileSelect, disabledFile, className, onBackToCalendar }) => {
   const [activeTab, setActiveTab] = useState('images');
 
   // Sample data for demonstration; replace with actual data as needed
@@ -61,28 +62,33 @@ const CompareFileExplorer: React.FC<CompareFileExplorerProps> = ({ selectedDate,
     : { images: [], videos: [], pointclouds: [] };
 
     const renderThumbnails = (thumbnails: { src: string; type: 'image' | 'video' | 'pointcloud' }[]) => {
-        return thumbnails.map((thumbnail, index) => {
-          const fileName = thumbnail.src.split('/').pop();
-          const hdImagePath = thumbnail.src.replace('/thumbnails/', '/panoramas/'); // HD image path
-      
-          return (
-            <div
-              key={index}
-              className="flex flex-col cursor-pointer"
-              onClick={() => {
-                if (thumbnail.type === 'pointcloud') {
-                  onFileSelect(thumbnail.src); // Send PCD file URL for comparison viewing
+      return thumbnails.map((thumbnail, index) => {
+        const fileName = thumbnail.src.split('/').pop();
+        const hdImagePath = thumbnail.src.replace('/thumbnails/', '/panoramas/');
+    
+        const isDisabled = thumbnail.src === disabledFile;
+    
+        return (
+          <div
+            key={index}
+            className={`flex flex-col cursor-pointer ${isDisabled ? 'opacity-30 cursor-not-allowed' : ''}`}
+            onClick={() => {
+              if (!isDisabled) {
+                if (thumbnail.type === 'image') {
+                  onFileSelect(thumbnail.src);
                 } else {
-                  onFileSelect(hdImagePath); // Handle images
+                  onFileSelect(hdImagePath);
                 }
-              }}
-            >
-              <Thumbnail src={thumbnail.src} type={thumbnail.type} />
-              <p className="text-sm text-center text-gray-600 dark:text-gray-200 mt-2">{fileName}</p>
-            </div>
-          );
-        });
-      };
+              }
+            }}
+          >
+            <Thumbnail src={thumbnail.src} type={thumbnail.type} />
+            <p className="text-sm text-center text-gray-600 dark:text-gray-200 mt-2">{fileName}</p>
+          </div>
+        );
+      });
+    };
+    
       
 
 

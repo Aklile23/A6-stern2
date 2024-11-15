@@ -72,6 +72,11 @@ const ComparePage: React.FC = () => {
   };
 
   const handleLeftThumbnailClick = (fileUrl: string) => {
+    if (fileUrl === rightSelectedFile) {
+      // Optionally show a message or prevent selection
+      alert('This file is already selected for the right view!');
+      return;
+    }
   setLeftSelectedFile(fileUrl); // Ensure this updates the state correctly
   if (fileUrl.endsWith('.glb') || fileUrl.endsWith('.obj') || fileUrl.endsWith('.e57')) {
     setLeftHDImageUrl(fileUrl);
@@ -83,6 +88,11 @@ const ComparePage: React.FC = () => {
 };
 
 const handleRightThumbnailClick = (fileUrl: string) => {
+  if (fileUrl === leftSelectedFile) {
+    // Optionally show a message or prevent selection
+    alert('This file is already selected for the left view!');
+    return;
+  }
   setRightSelectedFile(fileUrl); // Ensure this updates the state correctly
   if (fileUrl.endsWith('.glb') || fileUrl.endsWith('.obj') || fileUrl.endsWith('.e57')) {
     setRightHDImageUrl(fileUrl);
@@ -107,7 +117,6 @@ const handleRightThumbnailClick = (fileUrl: string) => {
   const [rightSafetyIssue, setRightSafetyIssue] = useState(false);
   const [rightQualityIssue, setRightQualityIssue] = useState(false);
   const [rightDelayed, setRightDelayed] = useState(false);
-
 
   const openPublishModal = () => setIsModalOpen(true);
 
@@ -370,6 +379,7 @@ const handleRightThumbnailClick = (fileUrl: string) => {
                     selectedDate={leftSelectedDate}
                     onFileSelect={handleLeftThumbnailClick}
                     className="w-full h-full"
+                    disabledFile={rightSelectedFile}
                     onBackToCalendar={() => setShowLeftCalendar(true)}
                   />
                 )
@@ -402,6 +412,7 @@ const handleRightThumbnailClick = (fileUrl: string) => {
                     selectedDate={rightSelectedDate}
                     onFileSelect={handleRightThumbnailClick}
                     className="w-full h-full"
+                    disabledFile={leftSelectedFile}
                     onBackToCalendar={() => setShowRightCalendar(true)}
                   />
                 )

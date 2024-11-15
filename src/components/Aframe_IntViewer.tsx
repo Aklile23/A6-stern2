@@ -178,6 +178,12 @@ const Aframe_IntViewer: React.FC = () => {
         </div>
         <div className="flex flex-col space-y-4 mt-7">
           <button
+            // onClick={openPublishModal}
+            className="bg-primary text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-transform duration-300 hover:bg-opacity-60 self-start"
+          >
+            Save
+          </button>
+          <button
             onClick={openPublishModal}
             className="bg-primary text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-transform duration-300 hover:bg-opacity-60 self-start"
           >

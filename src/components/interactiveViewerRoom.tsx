@@ -379,12 +379,21 @@ const InteractiveViewerRoom: React.FC = () => {
             </div>
 
             {/* Publish Button */}
-            <button
-              onClick={openPublishModal}
-              className="bg-primary text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-transform duration-300 hover:bg-opacity-60 mr-1.5 -mt-1.5"
-            >
-              Publish
-            </button>
+            <div className='flex gap-3'>
+              <button
+                // onClick={openPublishModal}
+                className="bg-primary text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-transform duration-300 hover:bg-opacity-60 -mt-1.5"
+              >
+                Save
+              </button>
+
+              <button
+                onClick={openPublishModal}
+                className="bg-primary text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition-transform duration-300 hover:bg-opacity-60 mr-1.5 -mt-1.5"
+              >
+                Publish
+              </button>
+            </div>
           </div>
         </div>
       </div>

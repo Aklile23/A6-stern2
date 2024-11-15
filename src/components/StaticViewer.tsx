@@ -42,7 +42,6 @@ const StaticViewer: React.FC = () => {
     };
   }, []);
 
-
   const extractDateFromPath = (path: string): string => {
     // Split the path into parts
     const parts: string[] = path.split('/');
@@ -57,7 +56,6 @@ const StaticViewer: React.FC = () => {
     // Format the date as YYYY-MM-DD
     return `${dateSegment.slice(0, 4)}-${dateSegment.slice(4, 6)}-${dateSegment.slice(6, 8)}`;
   };
-  
 
   const fileName = imageUrl.split('/').pop();
   let formattedDate: string;
@@ -117,7 +115,6 @@ const StaticViewer: React.FC = () => {
 
     showLoading(); // Start the loading animation
   };
-
 
   const openPublishModal = () => setIsModalOpen(true);
   const closePublishModal = () => {
@@ -246,7 +243,6 @@ const StaticViewer: React.FC = () => {
     doc.save('2DViewer_Report.pdf');
   };
   
-  
   const handleModalPublish = () => {
     if (!includeAutoLabeling && !includeAdditionalComments) {
       setValidationMessage('Please select at least one option to include in the report.');
@@ -373,9 +369,9 @@ const StaticViewer: React.FC = () => {
 
       </div>
       {/* Publish Button for the Entire Form */}
-      <div className="flex justify-end mr-5 -mt-13 mb-3">
+      <div className="flex justify-end mr-5 -mt-15 mb-3 gap-3">
         <button
-          onClick={() => openPublishModal()}
+          // onClick={() => openPublishModal()}
           disabled={isGenerating} 
           className={` font-semibold py-3 px-6 rounded-lg shadow-md transition-transform duration-300 ${
             isGenerating
@@ -383,7 +379,18 @@ const StaticViewer: React.FC = () => {
               : 'bg-indigo-600 text-white hover:bg-indigo-700' // Active styles
           }`}
         >
-          Publish
+          Save
+        </button>
+        <button
+          // onClick={() => openPublishModal()}
+          disabled={isGenerating} 
+          className={` font-semibold py-3 px-6 rounded-lg shadow-md transition-transform duration-300 ${
+            isGenerating
+              ? 'bg-gray-400 text-gray-600 cursor-not-allowed' // Disabled styles
+              : 'bg-indigo-600 text-white hover:bg-indigo-700' // Active styles
+          }`}
+        >
+          Generate Report
         </button>
       </div>
 

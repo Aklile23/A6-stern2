@@ -5,6 +5,7 @@ import Compare360Viewer from './Compare360Viewer';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import ComparePCDViewer from './ComparePCDViewer';
+import { PDFDocument } from 'pdf-lib'; // Install this with npm
 
 const ComparePage: React.FC = () => {
   const availableDates = ['2024-10-07', '2024-10-09', '2024-10-11', '2024-10-14', '2024-10-16', '2024-10-18', '2024-10-21', '2024-10-23', '2024-10-25', '2024-10-28', '2024-11-01'];

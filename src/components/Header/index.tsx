@@ -1,11 +1,16 @@
 import DarkModeSwitcher from './DarkModeSwitcher';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
  const Header = (props: {
   sidebarOpen: string | boolean | undefined;
   setSidebarOpen: (arg0: boolean) => void;
   title?: string;
 }) => {
+
+  const { pathname } = useLocation(); // Get current route
+  const navigate = useNavigate();    // Navigation function
+
+  const isComparePage = pathname === '/compare';
 
   const navigation = useNavigate();
   return (
@@ -25,9 +30,9 @@ import { Link, useNavigate } from 'react-router-dom';
           <ul className="flex items-center gap-2 2xsm:gap-4">
             <button
               className="mr-5 inline-flex items-center justify-center rounded-md bg-primary py-3 px-10 text-center font-medium text-white hover:scale-105 lg:px-8 xl:px-10"
-              onClick={()=> navigation('/compare')}
+              onClick={() => navigate(isComparePage ? '/A6_stern' : '/compare')}
             >
-              Compare
+              {isComparePage ? 'Home' : 'Compare'}
             </button>
 
             {/* <!-- Dark Mode Toggler --> */}

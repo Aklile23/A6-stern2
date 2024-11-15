@@ -45,6 +45,9 @@ const ComparePage: React.FC = () => {
 
   const [leftImageDetails, setLeftImageDetails] = useState<{ fileName: string; date: string } | null>(null);
   const [rightImageDetails, setRightImageDetails] = useState<{ fileName: string; date: string } | null>(null);
+  // Add this at the top, alongside existing useState hooks
+  const [isBottomSectionVisible, setIsBottomSectionVisible] = useState(false);
+
 
   // Handlers to update image details from each viewer
   const handleLeftImageDetailsUpdate = (fileName: string, date: string) => {
@@ -69,24 +72,26 @@ const ComparePage: React.FC = () => {
   };
 
   const handleLeftThumbnailClick = (fileUrl: string) => {
-    if (fileUrl.endsWith('.glb') || fileUrl.endsWith('.obj') || fileUrl.endsWith('.e57')) {
-      setLeftHDImageUrl(fileUrl);
-      setShowLeftPCDViewer(true);
-    } else {
-      setLeftHDImageUrl(fileUrl);
-      setShowLeft360Viewer(true);
-    }
-  };
-  
-  const handleRightThumbnailClick = (fileUrl: string) => {
-    if (fileUrl.endsWith('.glb') || fileUrl.endsWith('.obj') || fileUrl.endsWith('.e57')) {
-      setRightHDImageUrl(fileUrl);
-      setShowRightPCDViewer(true);
-    } else {
-      setRightHDImageUrl(fileUrl);
-      setShowRight360Viewer(true);
-    }
-  };
+  setLeftSelectedFile(fileUrl); // Ensure this updates the state correctly
+  if (fileUrl.endsWith('.glb') || fileUrl.endsWith('.obj') || fileUrl.endsWith('.e57')) {
+    setLeftHDImageUrl(fileUrl);
+    setShowLeftPCDViewer(true);
+  } else {
+    setLeftHDImageUrl(fileUrl);
+    setShowLeft360Viewer(true);
+  }
+};
+
+const handleRightThumbnailClick = (fileUrl: string) => {
+  setRightSelectedFile(fileUrl); // Ensure this updates the state correctly
+  if (fileUrl.endsWith('.glb') || fileUrl.endsWith('.obj') || fileUrl.endsWith('.e57')) {
+    setRightHDImageUrl(fileUrl);
+    setShowRightPCDViewer(true);
+  } else {
+    setRightHDImageUrl(fileUrl);
+    setShowRight360Viewer(true);
+  }
+};
 
   const handleCloseLeft360Viewer = () => setShowLeft360Viewer(false);
   const handleCloseRight360Viewer = () => setShowRight360Viewer(false);
@@ -228,34 +233,24 @@ const ComparePage: React.FC = () => {
     }
   
     // Section: Notes
-    if (includeNotes) {
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(12);
-      doc.setTextColor(60);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.setTextColor(60);
   
-      if (isSeparateNotes) {
-        doc.text('Left View Notes:', 10, currentY);
-        doc.setFont("helvetica", "italic");
-        doc.setFontSize(11);
-        const leftNotesText = doc.splitTextToSize(leftNotes || "No notes provided for Left View.", 180);
-        doc.text(leftNotesText, 10, currentY + 10);
-        currentY += leftNotesText.length * 6 + 20;
+    doc.text('Left View Notes:', 10, currentY);
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(11);
+    const leftNotesText = doc.splitTextToSize(leftNotes || "No notes provided for Left View.", 180);
+    doc.text(leftNotesText, 10, currentY + 10);
+    currentY += leftNotesText.length * 6 + 20;
   
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(12);
-        doc.text('Right View Notes:', 10, currentY);
-        doc.setFont("helvetica", "italic");
-        const rightNotesText = doc.splitTextToSize(rightNotes || "No notes provided for Right View.", 180);
-        doc.text(rightNotesText, 10, currentY + 10);
-        currentY += rightNotesText.length * 6 + 20;
-      } else {
-        doc.text('Notes:', 10, currentY);
-        doc.setFont("helvetica", "italic");
-        const notesText = doc.splitTextToSize(notes || "No general notes provided.", 180);
-        doc.text(notesText, 10, currentY + 10);
-        currentY += notesText.length * 6 + 20;
-      }
-    }
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.text('Right View Notes:', 10, currentY);
+    doc.setFont("helvetica", "italic");
+    const rightNotesText = doc.splitTextToSize(rightNotes || "No notes provided for Right View.", 180);
+    doc.text(rightNotesText, 10, currentY + 10);
+    currentY += rightNotesText.length * 6 + 20;
   
     // Section: Report Flags
     doc.setFont("helvetica", "bold");
@@ -267,8 +262,7 @@ const ComparePage: React.FC = () => {
     doc.setFontSize(11);
   
     let flagsText = "";
-
-  if (isSeparateNotes) {
+  
     if (leftDelayed || leftQualityIssue || leftSafetyIssue) {
       flagsText += "Left View is marked";
       const leftIssues = [];
@@ -277,7 +271,7 @@ const ComparePage: React.FC = () => {
       if (leftSafetyIssue) leftIssues.push("for having a Safety Issue");
       flagsText += ` ${leftIssues.join(" and ")}. `;
     }
-
+  
     if (rightDelayed || rightQualityIssue || rightSafetyIssue) {
       flagsText += "Right View is marked";
       const rightIssues = [];
@@ -286,19 +280,10 @@ const ComparePage: React.FC = () => {
       if (rightSafetyIssue) rightIssues.push("for having a Safety Issue");
       flagsText += ` ${rightIssues.join(" and ")}. `;
     }
-  } else {
-    if (delayed || qualityIssue || safetyIssue) {
-      flagsText += "The project is marked as";
-      const projectIssues = [];
-      if (delayed) projectIssues.push("delayed");
-      if (qualityIssue) projectIssues.push("for having a Quality Issue");
-      if (safetyIssue) projectIssues.push("for having a Safety Issue");
-      flagsText += ` ${projectIssues.join(" and ")}. `;
-    } else {
+  
+    if (!flagsText) {
       flagsText = "No issues marked.";
     }
-}
-
   
     const flagsTextLines = doc.splitTextToSize(flagsText, 180);
     doc.text(flagsTextLines, 10, currentY + 10);
@@ -306,15 +291,15 @@ const ComparePage: React.FC = () => {
   
     // Section: Reference Images Table
     currentY += 10;
-
+  
     doc.setFont("helvetica", "bold");
     doc.setFontSize(14);
-    doc.text("", 105, currentY, { align: 'center' });
-    currentY += 1;
+    doc.text("Reference Images", 105, currentY, { align: 'center' });
+    currentY += 10;
   
     const leftColumnX = 20;
     const rightColumnX = 110;
-    let rowY = currentY + 10;
+    let rowY = currentY;
   
     const rows = Math.max(leftViewerScreenshots.length, rightViewerScreenshots.length);
   
@@ -349,8 +334,6 @@ const ComparePage: React.FC = () => {
   };
   
   
-  
-
   return (
     <div className="w-full max-w-screen-3xl bg-white rounded-md shadow-default dark:bg-boxdark dark:text-white p-4 mx-auto mt-6">
       
@@ -393,11 +376,11 @@ const ComparePage: React.FC = () => {
               )}
             </>
           )}
-          {leftSelectedFile && (
+          {/* {leftSelectedFile && (
             <div className="mt-4">
               <p className="text-white text-center">Selected File: {leftSelectedFile.split('/').pop()}</p>
             </div>
-          )}
+          )} */}
         </div>
   
         {/* Right Viewer Section */}
@@ -425,31 +408,50 @@ const ComparePage: React.FC = () => {
               )}
             </>
           )}
-          {rightSelectedFile && (
+          {/* {rightSelectedFile && (
             <div className="mt-4">
               <p className="text-white text-center">Selected File: {rightSelectedFile.split('/').pop()}</p>
             </div>
-          )}
+          )} */}
         </div>
       </div>
-  
-      {/* Checkbox Row for Separate Notes and Flag Checkboxes */}
-      <div className="flex items-center mb-3 mt-3 ml-2 space-x-6">
-        {/* Checkbox to toggle separate text areas */}
-        <div className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            checked={isSeparateNotes}
-            onChange={() => setIsSeparateNotes(!isSeparateNotes)}
-            className="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
-          />
-          <label className="text-gray-700 dark:text-gray-300">Use separate Notes for each Item</label>
-        </div>
+      <div className="flex justify-end mt-3 mb-3">
+        <button
+          onClick={() => setIsBottomSectionVisible(true)}
+          disabled={!leftSelectedFile || !rightSelectedFile}
+          className={`py-3 px-6 rounded-lg font-semibold shadow-md transition-transform duration-200 transform hover:scale-105 focus:outline-none ${
+            leftSelectedFile && rightSelectedFile
+              ? "bg-blue-500 text-white hover:bg-blue-600"
+              : "bg-gray-300 text-gray-500 cursor-not-allowed"
+          }`}
+        >
+          Compare
+        </button>
+      </div>
 
-        {/* Conditional Flag Checkboxes */}
-        {isSeparateNotes ? (
-          <>
-            {/* Left View Flag Checkboxes */}
+      {isBottomSectionVisible && (
+        <div>
+          {/* Notes Text Areas */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <textarea
+              placeholder="Add notes for the left view here..."
+              value={leftNotes}
+              onChange={(e) => setLeftNotes(e.target.value)}
+              className="w-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-strokedark rounded-md p-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              rows={4}
+            />
+            <textarea
+              placeholder="Add notes for the right view here..."
+              value={rightNotes}
+              onChange={(e) => setRightNotes(e.target.value)}
+              className="w-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-strokedark rounded-md p-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              rows={4}
+            />
+          </div>
+
+          {/* Flags Section */}
+          <div className="flex items-center mb-3 mt-3 ml-2 space-x-6">
+            {/* Left View Flags */}
             <div className="flex items-center space-x-4">
               <label className="text-gray-700 dark:text-gray-300 font-semibold">Left View Flags:</label>
               <div className="flex items-center space-x-2">
@@ -481,9 +483,9 @@ const ComparePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Right View Flag Checkboxes */}
-            <div className="flex items-center space-x-4 ">
-              <label className="text-gray-700 dark:text-gray-300 font-semibold ml-56">Right View Flags:</label>
+            {/* Right View Flags */}
+            <div className="flex items-end space-x-4">
+              <label className="text-gray-700 dark:text-gray-300 font-semibold ml-125">Right View Flags:</label>
               <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
@@ -512,81 +514,25 @@ const ComparePage: React.FC = () => {
                 <label className="text-gray-700 dark:text-gray-300">Delayed</label>
               </div>
             </div>
-          </>
-        ) : (
-          // Single Set of Flag Checkboxes for Unified Notes View
-          <div className="flex items-center space-x-4">
-            <label className="text-gray-700 dark:text-gray-300 font-semibold">Flags:</label>
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={safetyIssue}
-                onChange={() => setSafetyIssue(!safetyIssue)}
-                className="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
-              />
-              <label className="text-gray-700 dark:text-gray-300">Safety Issue</label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={qualityIssue}
-                onChange={() => setQualityIssue(!qualityIssue)}
-                className="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
-              />
-              <label className="text-gray-700 dark:text-gray-300">Quality Issue</label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={delayed}
-                onChange={() => setDelayed(!delayed)}
-                className="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
-              />
-              <label className="text-gray-700 dark:text-gray-300">Delayed</label>
-            </div>
           </div>
-        )}
-      </div>
 
-
-  
-      {/* Conditionally Render Text Areas */}
-      {isSeparateNotes ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <textarea
-            placeholder="Add notes for the left view here..."
-            value={leftNotes}
-            onChange={(e) => setLeftNotes(e.target.value)}
-            className="w-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-strokedark rounded-md p-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
-            rows={4}
-          />
-          <textarea
-            placeholder="Add notes for the right view here..."
-            value={rightNotes}
-            onChange={(e) => setRightNotes(e.target.value)}
-            className="w-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-strokedark rounded-md p-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
-            rows={4}
-          />
+          {/* Buttons Section */}
+          <div className="flex justify-end mt-6 gap-3">
+            <button
+              // onClick={openPublishModal}
+              className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-transform duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Save
+            </button>
+            <button
+              onClick={openPublishModal}
+              className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-transform duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Generate Report
+            </button>
+          </div>
         </div>
-      ) : (
-        <textarea
-          placeholder="Add comparison notes here..."
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          className="w-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-strokedark rounded-md p-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
-          rows={4}
-        />
-      )}
-  
-      {/* Publish Button */}
-      <div className="flex justify-end mt-6">
-        <button
-          onClick={openPublishModal}
-          className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-transform duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Publish Comparison
-        </button>
-      </div>
+      )} 
   
       {/* Publish Modal */}
       {isModalOpen && (

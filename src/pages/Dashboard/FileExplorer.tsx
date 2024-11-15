@@ -126,6 +126,22 @@ const FileExplorer: React.FC = () => {
     }));
   };
 
+  const calculateFileCounts = () => {
+    let imageCount = 0;
+    let videoCount = 0;
+    let pointcloudCount = 0;
+
+    Object.values(thumbnailsForSelectedDate).forEach((room) => {
+      imageCount += room.images.length;
+      videoCount += room.videos.length;
+      pointcloudCount += room.pointclouds.length;
+    });
+
+    return { imageCount, videoCount, pointcloudCount };
+  };
+
+  const { imageCount, videoCount, pointcloudCount } = calculateFileCounts();
+
   useEffect(() => {
     const initialCollapsedRooms: { [room: string]: boolean } = {};
     
@@ -227,12 +243,14 @@ const FileExplorer: React.FC = () => {
 
   return (
     <>
-      <Breadcrumb pageName='A6_stern' />
+      <Breadcrumb pageName={`${selectedDate}`} />
       <div className="w-full bg-white rounded-md shadow-default dark:bg-boxdark dark:text-white">
         <div className="p-4 border-b border-gray-300 dark:border-strokedark">
-          <h1 className="text-xl font-bold text-black dark:text-white">File Explorer</h1>
-          <p className="text-sm text-black dark:text-gray-400 mt-2">
+          <h1 className="text-xl font-bold text-black dark:text-white">
             Selected Date: <span className="font-semibold">{selectedDate || 'None'}</span>
+          </h1>
+          <p className="text-sm text-black dark:text-gray-400 mt-2">
+            Images ({imageCount}), Videos ({videoCount}), Pointcloud data ({pointcloudCount})
           </p>
         </div>
 

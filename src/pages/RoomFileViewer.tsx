@@ -125,7 +125,7 @@ const RoomFileViewer: React.FC<RoomFileViewerProps> = ({ }) => {
 
   return (
     <>
-      <Breadcrumb pageName={`A6_stern`} />
+      <Breadcrumb pageName={`${room.charAt(0).toUpperCase()}${room.slice(1).replace(/([a-zA-Z]+)(\d+)/, '$1 $2')}`} />
       <div className="w-full bg-white rounded-md shadow-default dark:bg-boxdark dark:text-white">
         <div className="p-4 border-b border-gray-300 dark:border-strokedark">
           <h1 className="text-xl font-bold text-black dark:text-white">

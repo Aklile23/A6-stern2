@@ -74,7 +74,7 @@ const CompareFileExplorer: React.FC<CompareFileExplorerProps> = ({ selectedDate,
             className={`flex flex-col cursor-pointer ${isDisabled ? 'opacity-30 cursor-not-allowed' : ''}`}
             onClick={() => {
               if (!isDisabled) {
-                if (thumbnail.type === 'image') {
+                if (thumbnail.type === 'pointcloud') {
                   onFileSelect(thumbnail.src);
                 } else {
                   onFileSelect(hdImagePath);
